@@ -2,11 +2,12 @@
 
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SearchResult {
   title?: string;
   name?: string;
+  nombre?: string;        // ← Agregar esto para compatibilidad con backend
   artist?: string;
   description?: string;
   similarity?: number;
@@ -37,6 +38,20 @@ const MOCK_RESULTS: SearchResult[] = [
 export default function Home() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [backendActivo, setBackendActivo] = useState<boolean | null>(null);
+
+  // Verificar si el backend está activo
+  useEffect(() => {
+    const verificarBackend = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/health');
+        setBackendActivo(response.ok);
+      } catch {
+        setBackendActivo(false);
+      }
+    };
+    verificarBackend();
+  }, []);
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -51,6 +66,8 @@ export default function Home() {
       );
       if (response.ok) {
         const data = await response.json();
+        // El backend devuelve { total, resultados }
+        // Cada resultado tiene: { nombre, clases }
         setResults(data.resultados || []);
       } else {
         setResults([]);
@@ -78,6 +95,16 @@ export default function Home() {
             <p className="text-sm text-slate-500">
               Encuentra instrumentos y conceptos utilizando búsqueda semántica
             </p>
+            {backendActivo === true && (
+              <span className="inline-block mt-2 px-2 py-1 bg-green-900 text-green-300 text-xs rounded-full">
+                ✅ Backend conectado
+              </span>
+            )}
+            {backendActivo === false && (
+              <span className="inline-block mt-2 px-2 py-1 bg-red-900 text-red-300 text-xs rounded-full">
+                ❌ Backend desconectado
+              </span>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -107,13 +134,12 @@ export default function Home() {
               <div className="flex flex-col gap-2.5">
                 {displayResults.map((result, index) => (
                   <ResultCard
-                    key={hasRealResults ? index : `mock-${index}`}
-                    title={result.title || result.name || ''}
+                    key={hasRealResults ? `result-${index}` : `mock-${index}`}
+                    title={result.title || result.name || result.nombre || ''}
                     name={result.name}
                     description={result.description}
                     classes={result.clases}
                     similarity={result.similarity}
-                    //rank={index}
                   />
                 ))}
               </div>
