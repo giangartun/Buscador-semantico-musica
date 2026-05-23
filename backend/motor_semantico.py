@@ -29,7 +29,7 @@ def cargar_y_razonar():
             sync_reasoner(infer_property_values=True) 
             
         _onto_instancia = onto  # Guardamos el resultado en la variable global
-        print("[Motor] ¡Ontología e Inferencias listas en memoria! 🧠")
+        print("[Motor] ¡Ontología e Inferencias listas en memoria!")
         return _onto_instancia
         
     except Exception as e:
