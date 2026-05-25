@@ -29,7 +29,7 @@ def cargar_y_razonar():
             sync_reasoner(infer_property_values=True) 
             
         _onto_instancia = onto  # Guardamos el resultado en la variable global
-        print("[Motor] ¡Ontología e Inferencias listas en memoria! 🧠")
+        print("[Motor] ¡Ontología e Inferencias listas en memoria!")
         return _onto_instancia
         
     except Exception as e:
@@ -87,6 +87,45 @@ def buscar_individuos_por_clase(nombre_clase):
             "clases": [c.name for c in ind.is_a]
         })
     return resultado
+
+def obtener_clases():
+    onto = cargar_y_razonar()
+
+    if not onto:
+        return []
+
+    clases = []
+
+    for clase in onto.classes():
+        clases.append({
+            "nombre": clase.name
+        })
+
+    return clases
+
+def obtener_detalle_individuo(nombre_individuo):
+    onto = cargar_y_razonar()
+
+    if not onto:
+        return None
+
+    individuo = onto.search_one(iri=f"*{nombre_individuo}")
+
+    if not individuo:
+        return None
+
+    propiedades = {}
+
+    for prop in individuo.get_properties():
+        valores = prop[individuo]
+
+        propiedades[prop.name] = [str(v) for v in valores]
+
+    return {
+        "nombre": individuo.name,
+        "clases": [c.name for c in individuo.is_a],
+        "propiedades": propiedades
+    }
 
 # ==========================================
 # ÁREA DE PRUEBAS LOCALES

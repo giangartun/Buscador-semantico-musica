@@ -13,6 +13,21 @@
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
     <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
     <Declaration>
+        <Class IRI="http://dbpedia.org/ontology/Instrument"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumento_Cuerda"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumento_Percusion"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumento_VientoMadera"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumento_VientoMetal"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="/Acustica"/>
     </Declaration>
     <Declaration>
@@ -86,6 +101,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="/Vibracion"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#esInstrumentoDe"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="/afectaA"/>
@@ -1029,6 +1047,26 @@
     <Declaration>
         <NamedIndividual IRI="/violin"/>
     </Declaration>
+    <EquivalentClasses>
+        <Class IRI="http://dbpedia.org/ontology/Instrument"/>
+        <Class IRI="/Instrumento"/>
+    </EquivalentClasses>
+    <SubClassOf>
+        <Class IRI="#Instrumento_Cuerda"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Instrumento_Percusion"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Instrumento_VientoMadera"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Instrumento_VientoMetal"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
     <SubClassOf>
         <Class IRI="/Acustica"/>
         <Class IRI="/Propiedad"/>
@@ -1114,11 +1152,11 @@
         <NamedIndividual IRI="/Acordeon_Cromatico"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_VientoMadera"/>
         <NamedIndividual IRI="/Aerofono_Andino"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_VientoMadera"/>
         <NamedIndividual IRI="/Aerofono_DobleCana"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1198,7 +1236,7 @@
         <NamedIndividual IRI="/Celesta_Orquestal"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Cimbalum_CuerdaPercutida"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1206,7 +1244,7 @@
         <NamedIndividual IRI="/Clavecin_Doble"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Clavicordio_CuerdaPercutida"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1226,7 +1264,7 @@
         <NamedIndividual IRI="/Concierto_Piano_3_Rach"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Contrabajo_ArcoTradicional"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1410,7 +1448,7 @@
         <NamedIndividual IRI="/Gaspard_De_La_Nuit_Scarbo"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Glockenspiel_Studio"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1446,7 +1484,7 @@
         <NamedIndividual IRI="/Llave_Clarinete"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Marimba_Concert"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1538,11 +1576,11 @@
         <NamedIndividual IRI="/Piano_Cola_Concierto"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Piano_CuerdaPercutida_A"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Piano_CuerdaPercutida_B"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1614,11 +1652,11 @@
         <NamedIndividual IRI="/Tecnica_Scordatura_Violin_Barroco"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Timbal_Orquestal"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Timbal_Sinfonico_2"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1702,11 +1740,11 @@
         <NamedIndividual IRI="/Vibracion_Violin_ModulacionFisica_4"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Vibrafono_Pro"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Viola_ArcoTradicional"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1714,7 +1752,7 @@
         <NamedIndividual IRI="/Viola_Orquestal"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Violin_ArcoTradicional"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1722,7 +1760,7 @@
         <NamedIndividual IRI="/Violin_Stradivarius"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1734,7 +1772,7 @@
         <NamedIndividual IRI="/Vuelo_Moscardon"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Percusion"/>
         <NamedIndividual IRI="/Xilofono_Orquestal"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1742,11 +1780,11 @@
         <NamedIndividual IRI="/acento"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Capacidad"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/arpa"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="/Capacidad"/>
         <NamedIndividual IRI="/arpa"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1798,7 +1836,7 @@
         <NamedIndividual IRI="/c_violoncello_std"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_VientoMadera"/>
         <NamedIndividual IRI="/clarinete"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1834,7 +1872,7 @@
         <NamedIndividual IRI="/fff"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_VientoMadera"/>
         <NamedIndividual IRI="/flauta"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1850,11 +1888,11 @@
         <NamedIndividual IRI="/glissando"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Capacidad"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/guitarra"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="/Capacidad"/>
         <NamedIndividual IRI="/guitarra"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -1862,7 +1900,7 @@
         <NamedIndividual IRI="/legato"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/mandolina"/>
     </ClassAssertion>
     <ClassAssertion>
@@ -2070,7 +2108,7 @@
         <NamedIndividual IRI="/vibracion_moog_osc"/>
     </ClassAssertion>
     <ClassAssertion>
-        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
         <NamedIndividual IRI="/violin"/>
     </ClassAssertion>
     <ObjectPropertyAssertion>
@@ -2102,6 +2140,11 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Aerofono_Moderno"/>
         <NamedIndividual IRI="/Vibracion_Aerofono_PresionMin_4"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Appel_insterstellaire"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2164,14 +2207,29 @@
         <NamedIndividual IRI="/Vibracion_Piano_SustainNatural_3"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Concierto_Oboe_Mozart"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Concierto_Oboe_Mozart"/>
         <NamedIndividual IRI="/Capacidad_Monofonica"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Concierto_Piano_21"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Concierto_Piano_21"/>
         <NamedIndividual IRI="/Capacidad_Fantaisie"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Concierto_Piano_3_Rach"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2194,6 +2252,11 @@
         <NamedIndividual IRI="/Capacidad_CuerdaFrotada"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Density_21_5"/>
+        <NamedIndividual IRI="/flauta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Density_21_5"/>
         <NamedIndividual IRI="/Capacidad_Monofonica"/>
@@ -2204,9 +2267,19 @@
         <NamedIndividual IRI="/Articulacion_AltaDensidad"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Ejercicio_51_No15"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Ejercicio_51_No15"/>
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Estudio_Escalier"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2214,9 +2287,19 @@
         <NamedIndividual IRI="/Capacidad_Extrema_Piano"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Estudio_Op10_No2"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Estudio_Op10_No2"/>
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Estudio_Op25_No6"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2224,9 +2307,19 @@
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Estudio_Op72_No11"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Estudio_Op72_No11"/>
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Fantaisie_Impromptu"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2234,14 +2327,29 @@
         <NamedIndividual IRI="/Capacidad_Fantaisie"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Fantasia_Cromatica"/>
+        <NamedIndividual IRI="/Clavicordio_CuerdaPercutida"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Fantasia_Cromatica"/>
         <NamedIndividual IRI="/Capacidad_Fantaisie"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Feux_Follets"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Feux_Follets"/>
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Gaspard_De_La_Nuit_Scarbo"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2279,9 +2387,19 @@
         <NamedIndividual IRI="/Capacidad_CuerdaFrotada"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Islamey"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Islamey"/>
         <NamedIndividual IRI="/Capacidad_Extrema_Piano"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/La_Campanella"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2292,6 +2410,11 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Marimba_Concert"/>
         <NamedIndividual IRI="/Cuerpo_Marimba_AlturaDeterminada"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_01"/>
+        <NamedIndividual IRI="/clarinete"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/usaTecnica"/>
@@ -2314,6 +2437,11 @@
         <NamedIndividual IRI="/frullato"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_03"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/usaTecnica"/>
         <NamedIndividual IRI="/Obra_03"/>
         <NamedIndividual IRI="/preparacionInstrumento"/>
@@ -2327,6 +2455,11 @@
         <ObjectProperty IRI="/requiereTecnica"/>
         <NamedIndividual IRI="/Obra_04"/>
         <NamedIndividual IRI="/digitacionCruzada"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_05"/>
+        <NamedIndividual IRI="/clarinete"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/usaTecnica"/>
@@ -2349,6 +2482,11 @@
         <NamedIndividual IRI="/frullato"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_07"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/usaTecnica"/>
         <NamedIndividual IRI="/Obra_07"/>
         <NamedIndividual IRI="/preparacionInstrumento"/>
@@ -2369,9 +2507,19 @@
         <NamedIndividual IRI="/preparacionInstrumento"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_09"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/usaTecnica"/>
         <NamedIndividual IRI="/Obra_09"/>
         <NamedIndividual IRI="/preparacionInstrumento"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_A"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2379,14 +2527,29 @@
         <NamedIndividual IRI="/Vibracion_Timbal_ParcheNatural"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_B"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_B"/>
         <NamedIndividual IRI="/Vibracion_Timbal2_ParcheNatural"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_C"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_C"/>
         <NamedIndividual IRI="/Vibracion_Timbal_ParcheNatural"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Obra_Percusion_ParcheNatural_D"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2439,9 +2602,19 @@
         <NamedIndividual IRI="/Vibracion_Piano_SustainNatural_2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Precipitato_Prokofiev"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Precipitato_Prokofiev"/>
         <NamedIndividual IRI="/Ejecucion_VueloMoscardon"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Sonata_Appassionata"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2449,14 +2622,29 @@
         <NamedIndividual IRI="/Capacidad_Fantaisie"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Sonata_Bartok"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Sonata_Bartok"/>
         <NamedIndividual IRI="/Capacidad_Extrema_Piano"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Sonata_Liszt"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Sonata_Liszt"/>
         <NamedIndividual IRI="/Capacidad_Fantaisie"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Syrinx_Flauta"/>
+        <NamedIndividual IRI="/flauta"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2502,6 +2690,16 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Timbal_Sinfonico_2"/>
         <NamedIndividual IRI="/Vibracion_Timbal2_ParcheNatural"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Toccata_Schumann"/>
+        <NamedIndividual IRI="/Piano_Cola_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Tres_Piezas_Clarinete"/>
+        <NamedIndividual IRI="/clarinete"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -2572,6 +2770,16 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Violonchelo_Solista"/>
         <NamedIndividual IRI="/Capacidad_CuerdaFrotada"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Vuelo_Moscardon"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="/Vuelo_Moscardon"/>
+        <NamedIndividual IRI="/violin"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/tienePropiedad"/>
@@ -4248,6 +4456,14 @@
         <NamedIndividual IRI="/violin"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#float">8.5</Literal>
     </DataPropertyAssertion>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#esInstrumentoDe"/>
+        <ObjectProperty IRI="/interpretadaPor"/>
+    </InverseObjectProperties>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#esInstrumentoDe"/>
+        <Class IRI="/Instrumento"/>
+    </ObjectPropertyDomain>
     <ObjectPropertyDomain>
         <ObjectProperty IRI="/afectaA"/>
         <Class IRI="/Interna"/>
@@ -4304,6 +4520,10 @@
         <ObjectProperty IRI="/usaTecnica"/>
         <Class IRI="/Obra"/>
     </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#esInstrumentoDe"/>
+        <Class IRI="/Obra"/>
+    </ObjectPropertyRange>
     <ObjectPropertyRange>
         <ObjectProperty IRI="/afectaA"/>
         <Class IRI="/Propiedad"/>
