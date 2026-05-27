@@ -1,29 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { FormEvent } from 'react';
 
 interface SearchBarProps {
-  onSearch?: (query: string) => void;
+  value: string;
+  onValueChange: (value: string) => void;
+  onSearch: (query: string) => void;
+  onClearInput: () => void;
   placeholder?: string;
+  isLoading?: boolean;
 }
 
-export default function SearchBar({ 
-  onSearch, 
-  placeholder = 'Buscar música...' 
+export default function SearchBar({
+  value,
+  onValueChange,
+  onSearch,
+  onClearInput,
+  placeholder = 'Buscar...',
+  isLoading = false,
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSearch) {
-      onSearch(query);
-    }
-  };
+    const termino = value.trim();
 
-  const handleClear = () => {
-    setQuery('');
-    if (onSearch) {
-      onSearch('');
+    if (termino && !isLoading) {
+      onSearch(termino);
     }
   };
 
@@ -32,29 +34,32 @@ export default function SearchBar({
       <div className="relative">
         <input
           type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={value}
+          onChange={(event) => onValueChange(event.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
-          aria-label="Buscar"
+          className="w-full px-4 py-3 pr-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
         />
-        {query && (
+
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+          {value && (
+            <button
+              type="button"
+              onClick={onClearInput}
+              className="px-2 py-1 text-gray-400 hover:text-gray-600 text-sm"
+              aria-label="Vaciar texto"
+            >
+              ✕
+            </button>
+          )}
+
           <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Limpiar búsqueda"
+            type="submit"
+            disabled={!value.trim() || isLoading}
+            className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 text-sm font-medium transition"
           >
-            ✕
+            {isLoading ? '...' : 'Buscar'}
           </button>
-        )}
-        <button
-          type="submit"
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors"
-          aria-label="Buscar"
-        >
-          🔍
-        </button>
+        </div>
       </div>
     </form>
   );
