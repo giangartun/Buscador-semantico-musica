@@ -1,17 +1,46 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from motor_semantico import cargar_y_razonar, buscar_individuos_por_clase, buscar_por_texto, obtener_clases, obtener_detalle_individuo
+from motor_semantico import (
+    cargar_y_razonar, 
+    buscar_individuos_por_clase, 
+    buscar_por_texto, 
+    obtener_clases, 
+    obtener_detalle_individuo,
+    ejecutar_consulta_semantica_musical
+)
+from queries_config import get_query_info
 from consultas_sparql import consultar_por_sparql_local, consultar_dbpedia_artistas
 
 app = Flask(__name__)
 CORS(app)
 
-print("\n--- [Servidor] Iniciando Servidor Backend Semántico ---")
+print("\n--- [Servidor] Iniciando Servidor Backend Semántico Musical ---")
+# Carga inicial de la ontología y ejecución única del razonador
 cargar_y_razonar()
+
+@app.route('/api/semantic/<query_name>', methods=['GET'])
+def api_semantic_queries(query_name):
+    """
+    Ruta para ejecutar consultas de lógica técnica e histórica avanzada.
+    Permite filtrar por criterios específicos como periodo, dificultad o autor.
+    """
+    info = get_query_info(query_name)
+    if not info:
+        return jsonify({"error": f"La consulta técnica '{query_name}' no existe en la configuración."}), 404
+
+    # Captura el parámetro opcional si la consulta lo requiere (ej. ?param=Mozart)
+    param = request.args.get('param')
+    resultados = ejecutar_consulta_semantica_musical(query_name, param)
+
+    return jsonify({
+        "title": info["title"],
+        "description": info["description"],
+        "total": len(resultados),
+        "resultados": resultados
+    }), 200
 
 @app.route('/api/dbpedia', methods=['GET'])
 def api_dbpedia():
-
     artista = request.args.get('nombre')
 
     if not artista:
@@ -28,7 +57,6 @@ def api_dbpedia():
 
 @app.route('/api/sparql', methods=['GET'])
 def api_sparql():
-
     texto = request.args.get('texto')
 
     if not texto:
@@ -71,12 +99,10 @@ def api_buscar():
         "resultados": resultados
     })
 
-# ===== AGREGAR ESTA RUTA =====
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "ok", "message": "Backend funcionando"}), 200
-# ==============================
+    return jsonify({"status": "ok", "message": "Backend musical funcionando"}), 200
 
 if __name__ == "__main__":
-    print("[Servidor] API lista en http://localhost:5000/api/buscar")
+    print("[Servidor] API lista y escuchando en http://localhost:5000")
     app.run(host="0.0.0.0", port=5000, debug=False)
