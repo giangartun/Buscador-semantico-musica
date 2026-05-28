@@ -6,7 +6,7 @@ from owlready2 import default_world, Thing
 import types
 import motor_semantico  # Acceso directo a nuestra ontología en memoria RAM
 
-# Configuración de Endpoints usando la estrategia del otro grupo
+# Configuración de Endpoints usando lookup
 DBPEDIA_LOOKUP_ENDPOINT = "https://lookup.dbpedia.org/api/search"
 
 # Diccionario de mapeo directo para música clásica.
