@@ -119,7 +119,7 @@ def consultar_dbpedia_artistas(nombre_artista):
                 })
 
         if resultados_limpios:
-            # Poblamos en caliente sobre nuestra ontología activa
+            # Poblamos sobre nuestra ontología activa
             poblar_ontologia_con_dbpedia(resultados_limpios, "Artista")
             return resultados_limpios
 

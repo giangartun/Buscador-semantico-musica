@@ -1,4 +1,4 @@
-# Lista de consultas semánticas de carácter puramente técnico e histórico.
+# Lista de consultas semánticas técnica e histórica.
 
 SEMANTIC_QUERIES = {
     "obras_complejas_piano": {
