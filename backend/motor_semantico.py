@@ -12,6 +12,37 @@ _serialized_cache = {}
 # Prefijos semánticos típicos a remover para limpiar la interfaz del frontend
 PREFIXES_TO_REMOVE = ["Inst_", "Art_", "Gen_", "Alb_", "Can_", "Obra_", "Aut_"]
 
+SYNONYMS = {
+    "violin": ["violin", "violin", "violín"],
+    "piano": ["piano"],
+    "guitarra": ["guitarra"],
+    "flauta": ["flauta"],
+    "oboe": ["oboe"],
+    "trompeta": ["trompeta"],
+    "percusion": ["percusion", "percusión"],
+    "cuerda": ["cuerda"],
+    "viento": ["viento"],
+    "romantico": ["romantico", "romántico"],
+    "barroco": ["barroco"],
+}
+
+def expandir_tokens(tokens):
+    resultado = []
+
+    for token in tokens:
+        agregado = False
+
+        for base, variantes in SYNONYMS.items():
+            if token in variantes:
+                resultado.extend(variantes)
+                agregado = True
+                break
+
+        if not agregado:
+            resultado.append(token)
+
+    return list(set(resultado))
+
 def cargar_y_razonar():
     """Carga la ontología y ejecuta el razonador HermiT en una ruta segura (una sola vez)."""
     global _onto_instancia
@@ -131,23 +162,67 @@ def buscar_individuos_por_clase(nombre_clase):
     return [serialize_element(ind) for ind in clase_objeto.instances()]
 
 def buscar_por_texto(palabra_clave):
-    """Busca de forma avanzada dividiendo la consulta del usuario en múltiples tokens."""
-    onto = cargar_y_razonar()
-    if not onto: return []
-    
-    tokens = [t for t in normalize_text(palabra_clave).split() if len(t) > 1]
-    if not tokens: return []
 
-    resultado = []
+    onto = cargar_y_razonar()
+
+    if not onto:
+        return []
+
+    tokens = [
+        t
+        for t in normalize_text(palabra_clave).split()
+        if len(t) > 1
+    ]
+
+    tokens = expandir_tokens(tokens)
+
+    resultados = []
+
     for ind in onto.individuals():
+
         data = serialize_element(ind)
-        texto_busqueda = normalize_text(
-            f"{data['id']} {data['nombre']} {data['periodoHistorico']} {data['autor']} "
-            f"{data['instrumentoRequerido']} {data['familiaInstrumento']} {' '.join(data['tags'])}"
-        )
-        if all(token in texto_busqueda for token in tokens):
-            resultado.append(data)
-    return resultado
+
+        score = 0
+
+        campos = {
+            "nombre": normalize_text(data["nombre"]),
+            "autor": normalize_text(data["autor"]),
+            "periodo": normalize_text(data["periodoHistorico"]),
+            "instrumento": normalize_text(data["instrumentoRequerido"]),
+            "familia": normalize_text(data["familiaInstrumento"]),
+            "tags": normalize_text(" ".join(data["tags"]))
+        }
+
+        for token in tokens:
+
+            if token in campos["nombre"]:
+                score += 20
+
+            if token in campos["autor"]:
+                score += 15
+
+            if token in campos["familia"]:
+                score += 10
+
+            if token in campos["instrumento"]:
+                score += 10
+
+            if token in campos["periodo"]:
+                score += 8
+
+            if token in campos["tags"]:
+                score += 5
+
+        if score > 0:
+            data["score"] = score
+            resultados.append(data)
+
+    resultados.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    return resultados
 
 def obtener_detalle_individuo(nombre_individuo):
     onto = cargar_y_razonar()
@@ -171,11 +246,110 @@ def q_instrumentos_viento_madera():
     return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
             if "viento madera" in normalize_text(serialize_element(ind)["familiaInstrumento"])]
 
+def q_instrumentos_cuerda():
+
+    return [
+
+        serialize_element(ind)
+
+        for ind in cargar_y_razonar().individuals()
+
+        if "cuerda"
+        in normalize_text(
+            serialize_element(ind)["familiaInstrumento"]
+        )
+    ]
+def q_instrumentos_viento():
+
+    return [
+
+        serialize_element(ind)
+
+        for ind in cargar_y_razonar().individuals()
+
+        if "viento"
+        in normalize_text(
+            serialize_element(ind)["familiaInstrumento"]
+        )
+    ]
+
+def q_instrumentos_percusion():
+
+    return [
+
+        serialize_element(ind)
+
+        for ind in cargar_y_razonar().individuals()
+
+        if "percusion"
+        in normalize_text(
+            serialize_element(ind)["familiaInstrumento"]
+        )
+    ]
+
+def q_obras_romanticas():
+
+    return [
+
+        serialize_element(ind)
+
+        for ind in cargar_y_razonar().individuals()
+
+        if "romantico"
+        in normalize_text(
+            serialize_element(ind)["periodoHistorico"]
+        )
+    ]
+
 def q_obras_por_autor(param):
     if not param: return []
     p = normalize_text(param)
     return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
             if p in normalize_text(serialize_element(ind)["autor"])]
+
+SEMANTIC_QUERY_MAP = {
+
+    "instrumentos de cuerda":
+        "instrumentos_cuerda",
+
+    "instrumentos de viento":
+        "instrumentos_viento",
+
+    "instrumentos de percusion":
+        "instrumentos_percusion",
+
+    "instrumentos de percusión":
+        "instrumentos_percusion",
+
+    "obras romanticas":
+        "obras_romanticas",
+
+    "obras románticas":
+        "obras_romanticas",
+
+    "obras de mozart":
+        "obras_por_autor",
+
+    "obras de chopin":
+        "obras_por_autor",
+
+    "obras de bach":
+        "obras_por_autor",
+
+    "obras de beethoven":
+        "obras_por_autor",
+}
+
+def detectar_consulta_semantica(texto):
+
+    texto = normalize_text(texto)
+
+    for frase, consulta in SEMANTIC_QUERY_MAP.items():
+
+        if normalize_text(frase) in texto:
+            return consulta
+
+    return None
 
 def ejecutar_consulta_semantica_musical(query_name, param=None):
     """Router central dinámico para invocar las consultas de lógica técnica."""

@@ -12,17 +12,25 @@ DBPEDIA_LOOKUP_ENDPOINT = "https://lookup.dbpedia.org/api/search"
 # Diccionario de mapeo directo para música clásica.
 # Esto garantiza que cuando busquen autores clave, el enlace a DBpedia sea instantáneo e infalible.
 PHRASE_RESOURCE_MAP = {
+
     "mozart": ["Wolfgang_Amadeus_Mozart"],
-    "wolfgang amadeus mozart": ["Wolfgang_Amadeus_Mozart"],
-    "chopin": ["Frédéric_Chopin"],
-    "frederic chopin": ["Frédéric_Chopin"],
     "beethoven": ["Ludwig_van_Beethoven"],
-    "ludwig van beethoven": ["Ludwig_van_Beethoven"],
     "bach": ["Johann_Sebastian_Bach"],
-    "johann sebastian bach": ["Johann_Sebastian_Bach"],
+    "chopin": ["Frédéric_Chopin"],
+
+    "vivaldi": ["Antonio_Vivaldi"],
+    "liszt": ["Franz_Liszt"],
+    "debussy": ["Claude_Debussy"],
+    "rachmaninoff": ["Sergei_Rachmaninoff"],
+
     "piano": ["Piano"],
     "violin": ["Violin"],
     "violín": ["Violin"],
+    "guitarra": ["Guitar"],
+    "oboe": ["Oboe"],
+    "flauta": ["Flute"],
+    "clarinete": ["Clarinet"],
+    "trompeta": ["Trumpet"]
 }
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}

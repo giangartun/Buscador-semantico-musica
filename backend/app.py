@@ -6,6 +6,7 @@ from motor_semantico import (
     buscar_por_texto, 
     obtener_clases, 
     obtener_detalle_individuo,
+    detectar_consulta_semantica,
     ejecutar_consulta_semantica_musical
 )
 from queries_config import get_query_info
@@ -84,12 +85,20 @@ def api_clases():
 def api_buscar():
     palabra_clave = request.args.get('texto')
     nombre_clase = request.args.get('clase')
-    
+    consulta_semantica = detectar_consulta_semantica(palabra_clave)
     if nombre_clase:
         resultados = buscar_individuos_por_clase(nombre_clase)
     elif palabra_clave:
-        resultados = buscar_por_texto(palabra_clave)
+        if consulta_semantica:
+            resultados = ejecutar_consulta_semantica_musical(
+            consulta_semantica
+        )
+        else:
+            resultados = buscar_por_texto(
+            palabra_clave
+         )
     else:
+
         return jsonify({
             "error": "Debes proporcionar el parámetro 'texto' o 'clase' en la URL."
         }), 400

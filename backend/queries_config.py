@@ -1,22 +1,27 @@
 # Lista de consultas semánticas técnica e histórica.
+from motor_semantico import q_obras_complejas_piano, q_autores_periodo_romantico, q_instrumentos_viento_madera, q_instrumentos_cuerda, q_instrumentos_viento, q_instrumentos_percusion, q_obras_romanticas
 
 SEMANTIC_QUERIES = {
-    "obras_complejas_piano": {
-        "title": "Obras Maestras de Alta Dificultad para Piano",
-        "description": "Muestra composiciones complejas (ideales para Chopin o Beethoven) que requieren piano."
-    },
-    "autores_periodo_romantico": {
-        "title": "Compositores del Romanticismo",
-        "description": "Lista a los autores clásicos catalogados dentro del periodo romántico."
-    },
-    "instrumentos_viento_madera": {
-        "title": "Registro de Viento-Madera",
-        "description": "Filtra los instrumentos clasificados técnicamente bajo la familia acústica de viento-madera."
-    },
-    "obras_por_autor": {
-        "title": "Catálogo de Obras por Compositor",
-        "description": "Busca dinámicamente las piezas musicales creadas por un autor específico (ej. Mozart)."
-    }
+    "obras_complejas_piano":
+        q_obras_complejas_piano,
+
+    "autores_periodo_romantico":
+        q_autores_periodo_romantico,
+
+    "instrumentos_viento_madera":
+        q_instrumentos_viento_madera,
+
+    "instrumentos_cuerda":
+        q_instrumentos_cuerda,
+
+    "instrumentos_viento":
+        q_instrumentos_viento,
+
+    "instrumentos_percusion":
+        q_instrumentos_percusion,
+
+    "obras_romanticas":
+        q_obras_romanticas,
 }
 
 def get_query_info(query_name):
