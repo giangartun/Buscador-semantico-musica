@@ -16,10 +16,19 @@
         <Class IRI="http://dbpedia.org/ontology/Instrument"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#Compositor"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#Instrumento_Cuerda"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#Instrumento_Electronico"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#Instrumento_Percusion"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumento_Teclado"/>
     </Declaration>
     <Declaration>
         <Class IRI="#Instrumento_VientoMadera"/>
@@ -103,6 +112,12 @@
         <Class IRI="/Vibracion"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty IRI="#compuestaPor"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#compuso"/>
+    </Declaration>
+    <Declaration>
         <ObjectProperty IRI="#esInstrumentoDe"/>
     </Declaration>
     <Declaration>
@@ -146,6 +161,9 @@
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="/usaTecnica"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#descripcion"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="/accion"/>
@@ -326,6 +344,126 @@
     </Declaration>
     <Declaration>
         <DataProperty IRI="/volumen"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Acordeon_Cromatico"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Antonio_Vivaldi"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Arpa_Concierto"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Astor_Piazzolla"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Bajo_Electrico_Fender"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Capricho_24"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Celesta_Orquestal"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Corno_Frances"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Corno_Ingles"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Fagot"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Franz_Liszt"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Frederic_Chopin"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Historia_del_Tango_Bordel"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Jean_Michel_Jarre"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Johann_Sebastian_Bach"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Libertango"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Ludwig_van_Beethoven"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Niccolo_Paganini"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Organo_Tubos"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Oxygene_Pt4"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Piano_Cola_Steinway"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Pyotr_Ilyich_Tchaikovsky"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Saxofon_Alto"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Saxofon_Tenor"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Sergei_Rachmaninoff"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Sonata_Claro_de_Luna"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Tocata_y_Fuga_Re_Menor"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Trombon"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Trompeta"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Tuba"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Violin_Solista"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Wolfgang_Amadeus_Mozart"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s_sinte_jupiter"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s_sinte_moog"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#s_sintetizador_analogico"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="/Acordeon_Cromatico"/>
@@ -1056,7 +1194,15 @@
         <Class IRI="/Instrumento"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#Instrumento_Electronico"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#Instrumento_Percusion"/>
+        <Class IRI="/Instrumento"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Instrumento_Teclado"/>
         <Class IRI="/Instrumento"/>
     </SubClassOf>
     <SubClassOf>
@@ -1124,6 +1270,10 @@
         <Class IRI="/Propiedad"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="/Instrumento"/>
+        <Class IRI="#Instrumento_Cuerda"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="/Interna"/>
         <Class IRI="/Configuracion"/>
     </SubClassOf>
@@ -1147,6 +1297,166 @@
         <Class IRI="/Vibracion"/>
         <Class IRI="/Sonido"/>
     </SubClassOf>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Teclado"/>
+        <NamedIndividual IRI="#Acordeon_Cromatico"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Antonio_Vivaldi"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Cuerda"/>
+        <NamedIndividual IRI="#Arpa_Concierto"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Astor_Piazzolla"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Electronico"/>
+        <NamedIndividual IRI="#Bajo_Electrico_Fender"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Capricho_24"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Teclado"/>
+        <NamedIndividual IRI="#Celesta_Orquestal"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMetal"/>
+        <NamedIndividual IRI="#Corno_Frances"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMadera"/>
+        <NamedIndividual IRI="#Corno_Ingles"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMadera"/>
+        <NamedIndividual IRI="#Fagot"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Franz_Liszt"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Frederic_Chopin"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Historia_del_Tango_Bordel"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Jean_Michel_Jarre"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Johann_Sebastian_Bach"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Libertango"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Ludwig_van_Beethoven"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Niccolo_Paganini"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Teclado"/>
+        <NamedIndividual IRI="#Organo_Tubos"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Oxygene_Pt4"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Teclado"/>
+        <NamedIndividual IRI="#Piano_Cola_Steinway"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Pyotr_Ilyich_Tchaikovsky"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMadera"/>
+        <NamedIndividual IRI="#Saxofon_Alto"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMadera"/>
+        <NamedIndividual IRI="#Saxofon_Tenor"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Sergei_Rachmaninoff"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Sonata_Claro_de_Luna"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="/Obra"/>
+        <NamedIndividual IRI="#Tocata_y_Fuga_Re_Menor"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMetal"/>
+        <NamedIndividual IRI="#Trombon"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMetal"/>
+        <NamedIndividual IRI="#Trompeta"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_VientoMetal"/>
+        <NamedIndividual IRI="#Tuba"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Cuerda"/>
+        <NamedIndividual IRI="#Violin_Solista"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Compositor"/>
+        <NamedIndividual IRI="#Wolfgang_Amadeus_Mozart"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Electronico"/>
+        <NamedIndividual IRI="#s_sinte_jupiter"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Electronico"/>
+        <NamedIndividual IRI="#s_sinte_moog"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Instrumento_Electronico"/>
+        <NamedIndividual IRI="#s_sintetizador_analogico"/>
+    </ClassAssertion>
     <ClassAssertion>
         <Class IRI="/Cuerpo"/>
         <NamedIndividual IRI="/Acordeon_Cromatico"/>
@@ -2112,6 +2422,291 @@
         <NamedIndividual IRI="/violin"/>
     </ClassAssertion>
     <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Capricho_24"/>
+        <NamedIndividual IRI="#Niccolo_Paganini"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Capricho_24"/>
+        <NamedIndividual IRI="#Violin_Solista"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="#Wolfgang_Amadeus_Mozart"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="#Corno_Frances"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="/Viola_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="/flauta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Concierto_Clarinete_K622"/>
+        <NamedIndividual IRI="/violin"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+        <NamedIndividual IRI="#Pyotr_Ilyich_Tchaikovsky"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+        <NamedIndividual IRI="/Celesta_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#El_Cascanueces_Danza_Hada"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Historia_del_Tango_Bordel"/>
+        <NamedIndividual IRI="#Astor_Piazzolla"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Historia_del_Tango_Bordel"/>
+        <NamedIndividual IRI="/flauta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Historia_del_Tango_Bordel"/>
+        <NamedIndividual IRI="/guitarra"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="#Pyotr_Ilyich_Tchaikovsky"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="#Arpa_Concierto"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="#Corno_Frances"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/Contrabajo_Sinfonico"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/Viola_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/flauta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Lago_de_los_Cisnes"/>
+        <NamedIndividual IRI="/violin"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Libertango"/>
+        <NamedIndividual IRI="#Astor_Piazzolla"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Libertango"/>
+        <NamedIndividual IRI="/Acordeon_Cromatico"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Libertango"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Libertango"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Libertango"/>
+        <NamedIndividual IRI="/guitarra"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Oxygene_Pt4"/>
+        <NamedIndividual IRI="#Jean_Michel_Jarre"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Oxygene_Pt4"/>
+        <NamedIndividual IRI="/s_sinte_moog"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Oxygene_Pt4"/>
+        <NamedIndividual IRI="/s_sintetizador_analogico"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="#Antonio_Vivaldi"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="#Violin_Solista"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="/Clavecin_Doble"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="/Viola_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Primavera_Vivaldi"/>
+        <NamedIndividual IRI="/violin"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="#Ludwig_van_Beethoven"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="#Corno_Frances"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="#Fagot"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="#Trombon"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="#Trompeta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/Contrabajo_Sinfonico"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/Viola_Orquestal"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/clarinete"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/flauta"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sinfonia_5_Beethoven"/>
+        <NamedIndividual IRI="/violin"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Sonata_Claro_de_Luna"/>
+        <NamedIndividual IRI="#Ludwig_van_Beethoven"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Sonata_Claro_de_Luna"/>
+        <NamedIndividual IRI="/Piano_Cola_Steinway"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="#Tocata_y_Fuga_Re_Menor"/>
+        <NamedIndividual IRI="#Johann_Sebastian_Bach"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="/interpretadaPor"/>
+        <NamedIndividual IRI="#Tocata_y_Fuga_Re_Menor"/>
+        <NamedIndividual IRI="/Organo_Tubos"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
         <ObjectProperty IRI="/esActivado"/>
         <NamedIndividual IRI="/Acordeon_Cromatico"/>
         <NamedIndividual IRI="/Teclado_Piano"/>
@@ -2205,6 +2800,11 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Clavicordio_CuerdaPercutida"/>
         <NamedIndividual IRI="/Vibracion_Piano_SustainNatural_3"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="/Concierto_Oboe_Mozart"/>
+        <NamedIndividual IRI="#Wolfgang_Amadeus_Mozart"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/interpretadaPor"/>
@@ -2315,6 +2915,11 @@
         <ObjectProperty IRI="/tienePropiedad"/>
         <NamedIndividual IRI="/Estudio_Op72_No11"/>
         <NamedIndividual IRI="/Ejecucion_Op10_No2"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="/Fantaisie_Impromptu"/>
+        <NamedIndividual IRI="#Frederic_Chopin"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/interpretadaPor"/>
@@ -2445,6 +3050,11 @@
         <ObjectProperty IRI="/usaTecnica"/>
         <NamedIndividual IRI="/Obra_03"/>
         <NamedIndividual IRI="/preparacionInstrumento"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <NamedIndividual IRI="/Obra_04"/>
+        <NamedIndividual IRI="#Frederic_Chopin"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
         <ObjectProperty IRI="/interpretadaPor"/>
@@ -2792,6 +3402,156 @@
         <NamedIndividual IRI="/Cuerpo_Xilofono_AlturaDeterminada"/>
     </ObjectPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Acordeon_Cromatico"/>
+        <Literal>Instrumento aerófono portátil con fuelle y lengüetas libres. Posee teclados en ambos lados, permitiendo al ejecutante interpretar melodías complejas y acompañamientos armónicos simultáneamente.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Antonio_Vivaldi"/>
+        <Literal>Compositor y violinista italiano del período Barroco, figura clave en el desarrollo del concierto solista. Su dominio de la composición para cuerdas quedó inmortalizado en su famosa serie de conciertos &quot;Las cuatro estaciones&quot;.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Arpa_Concierto"/>
+        <Literal>Gran instrumento de cuerda pulsada con un complejo sistema de pedales. Ofrece una inmensa riqueza armónica y es fundamental para los efectos de glissando y texturas etéreas en la orquesta.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Astor_Piazzolla"/>
+        <Literal>Bandoneonista y compositor argentino, creador del &quot;Nuevo Tango&quot;. Revolucionó el género tradicional al incorporar elementos del jazz y la música clásica, utilizando instrumentaciones innovadoras que incluían guitarras eléctricas, pianos y cuerdas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Bajo_Electrico_Fender"/>
+        <Literal>Instrumento electrofónico de cuerda pulsada fundamental en la instrumentación moderna. Proporciona la base armónica y rítmica gracias a sus pastillas magnéticas que convierten la vibración de las cuerdas en señal eléctrica.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Celesta_Orquestal"/>
+        <Literal>Instrumento de teclado percutido que, mediante martillos cubiertos de fieltro, golpea láminas metálicas sobre cajas de resonancia. Produce un sonido cristalino y mágico inconfundible.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Corno_Frances"/>
+        <Literal>Instrumento de viento metal con tubo cónico enrollado y válvulas rotativas. Actúa como el puente tímbrico perfecto entre las familias de madera y metal gracias a su sonido cálido, redondo y majestuoso.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Corno_Ingles"/>
+        <Literal>Instrumento de viento madera de doble lengüeta, estrechamente emparentado con el oboe pero con registro más grave y campana piriforme. Destaca por su timbre profundamente melancólico.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Fagot"/>
+        <Literal>Instrumento grave de viento madera con lengüeta doble y un largo tubo plegado. Proporciona la base armónica de la sección de maderas, destacando por su tono oscuro, resonante y gran agilidad técnica.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Franz_Liszt"/>
+        <Literal>Compositor y pianista virtuoso húngaro del período romántico. Llevó la técnica del piano a niveles de exigencia sin precedentes, explorando al máximo los recursos acústicos del instrumento y creando el formato de poema sinfónico para orquesta.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Frederic_Chopin"/>
+        <Literal>Compositor y pianista virtuoso polaco-francés del Romanticismo. Su obra está dedicada casi en su totalidad al piano solo, destacando por una profunda expresividad, innovación armónica y una técnica brillante que redefinió el repertorio del instrumento.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Jean_Michel_Jarre"/>
+        <Literal>Compositor y productor francés, pionero mundial de la música electrónica. Es famoso por la integración masiva de sintetizadores analógicos, secuenciadores y tecnología electroacústica para crear paisajes sonoros complejos y vanguardistas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Johann_Sebastian_Bach"/>
+        <Literal>Compositor y organista alemán del período Barroco, considerado uno de los más grandes genios de la historia musical. Llevó a la cumbre el arte del contrapunto y la fuga, dejando una vasta obra estructuralmente perfecta para teclado, cuerdas y ensambles.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Ludwig_van_Beethoven"/>
+        <Literal>Compositor y pianista alemán, figura de transición vital entre las épocas Clásica y Romántica. Su obra sinfónica y sus sonatas redefinieron la música occidental, marcando un antes y un después en la intensidad emocional y la complejidad arquitectónica.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Niccolo_Paganini"/>
+        <Literal>Compositor y violinista virtuoso italiano del Romanticismo. Su técnica deslumbrante, velocidad extrema y el uso innovador de armónicos y pizzicatos establecieron un nuevo estándar definitivo para la ejecución del violín solista.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Organo_Tubos"/>
+        <Literal>Majestuoso instrumento de teclado y aerófono. Controla el paso del aire a presión a través de conjuntos de tubos de diferentes registros mediante múltiples teclados manuales y un pedalier.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Piano_Cola_Steinway"/>
+        <Literal>Instrumento de teclado y cuerda percutida de máxima exigencia mecánica. Su sofisticado mecanismo de escape y su enorme tabla armónica permiten un control absoluto de los matices dinámicos, desde el pianissimo más delicado hasta la resonancia más abrumadora.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Pyotr_Ilyich_Tchaikovsky"/>
+        <Literal>Compositor ruso del período romántico, célebre por su inigualable talento melódico y su magistral orquestación sinfónica. Es el autor de algunos de los ballets más icónicos de la historia, integrando familias completas de instrumentos con un dramatismo único.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Saxofon_Alto"/>
+        <Literal>Instrumento de viento madera con boquilla de lengüeta simple y cuerpo cónico de latón. Su registro medio-agudo y su extraordinaria expresividad vocal lo hacen protagonista tanto en orquestas contemporáneas como en la música popular.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Saxofon_Tenor"/>
+        <Literal>Miembro de la familia de los saxofones con un registro más grave e imponente. Su sonoridad robusta y aterciopelada es un pilar fundamental para los solos melódicos y la base de los ensambles modernos.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Sergei_Rachmaninoff"/>
+        <Literal>Compositor, pianista y director de orquesta ruso del período post-romántico. Su estilo se caracteriza por un profundo lirismo melancólico, armonías densas y texturas de una extrema dificultad técnica, diseñadas para explotar toda la sonoridad del piano moderno.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Trombon"/>
+        <Literal>Instrumento de viento metal que utiliza una vara telescópica deslizable para modificar la longitud del tubo y alterar la afinación. Su sonido es potente y es el único de la familia capaz de realizar glissandos puros y continuos.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Trompeta"/>
+        <Literal>El instrumento más agudo de la familia de viento metal, accionado por válvulas o pistones. Su timbre brillante y direccional le otorga un papel dominante en fanfarrias sinfónicas, pasajes heroicos y melodías principales.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Tuba"/>
+        <Literal>El instrumento de viento metal más grande y grave de la orquesta. Utiliza un complejo sistema de pistones o válvulas para proporcionar el soporte armónico y rítmico fundamental, sosteniendo todo el peso sonoro de la sección de metales.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Violin_Solista"/>
+        <Literal>Miembro de la familia de cuerdas clásicas destacado por su configuración y proyección acústica superior, destinado a la ejecución de melodías principales y pasajes de extrema virtuosidad técnica.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#Wolfgang_Amadeus_Mozart"/>
+        <Literal>Compositor austriaco del período Clásico y niño prodigio inigualable. Su prolífica obra abarca todos los géneros posibles de su época con una perfección formal, elegancia y brillantez melódica que siguen siendo la base del repertorio académico.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#s_sinte_jupiter"/>
+        <Literal>Sintetizador polifónico analógico clásico. Conocido por sus densas capas de múltiples osciladores, filtros cálidos y su capacidad para crear texturas orquestales electrónicas y atmósferas envolventes.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#s_sinte_moog"/>
+        <Literal>Sintetizador analógico monofónico legendario. Revolucionó la música moderna gracias a su diseño de control por voltaje, produciendo frecuencias graves profundas y solos de una contundencia electrónica inigualable.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="#s_sintetizador_analogico"/>
+        <Literal>Instrumento electrofónico que genera sonido a través de circuitos analógicos. Modela la onda sonora mediante la manipulación de frecuencias y voltajes, permitiendo la creación infinita de timbres artificiales desde cero.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Aerofono_DobleCana"/>
+        <Literal>Instrumento de viento madera provisto de una lengüeta doble. Su sonido penetrante, expresivo y estable lo convierte en el estándar universal para la afinación de la orquesta sinfónica.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/temperamento"/>
         <NamedIndividual IRI="/Afinacion_Temperada_Igual_440"/>
         <Literal>Temperado</Literal>
@@ -2857,6 +3617,16 @@
         <Literal>Multifonico</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Cimbalum_CuerdaPercutida"/>
+        <Literal>Instrumento tradicional compuesto por una gran caja de resonancia trapezoidal. Se ejecuta golpeando las cuerdas directamente con macillos manuales, generando un timbre folclórico muy resonante, utilizado frecuentemente en la música de Europa del Este y en ensambles contemporáneos.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Clavicordio_CuerdaPercutida"/>
+        <Literal>Instrumento de teclado histórico donde las cuerdas son percutidas por pequeñas cuñas de metal llamadas tangentes. Destaca por ser el único instrumento de teclado antiguo que permite al ejecutante aplicar un sutil vibrato mecánico (Bebung) y ligeras variaciones dinámicas directas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/accion"/>
         <NamedIndividual IRI="/Clavija_Afinacion"/>
         <Literal>Doble escape</Literal>
@@ -2900,6 +3670,11 @@
         <DataProperty IRI="/titulo"/>
         <NamedIndividual IRI="/Concierto_Piano_3_Rach"/>
         <Literal>Concierto para Piano No. 3</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Contrabajo_ArcoTradicional"/>
+        <Literal>El instrumento de arco más grave y voluminoso de la familia de las cuerdas. Sostiene los cimientos armónicos de la orquesta y es igualmente indispensable en ensambles modernos mediante la técnica del pizzicato.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/impedancia"/>
@@ -3272,6 +4047,11 @@
         <Literal>Gaspard de la nuit - Scarbo</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Glockenspiel_Studio"/>
+        <Literal>Instrumento de percusión de sonido determinado compuesto por láminas de acero afinadas. Al ser golpeadas con baquetas duras o de metal, produce un timbre brillante, penetrante y acampanado, ideal para destacar melodías agudas por encima de las texturas orquestales más densas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/teclas"/>
         <NamedIndividual IRI="/Interfaz_Trastes_Bajo_Elec_01"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">24</Literal>
@@ -3325,6 +4105,11 @@
         <DataProperty IRI="/tipo"/>
         <NamedIndividual IRI="/Llave_Clarinete"/>
         <Literal>Boehm</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Marimba_Concert"/>
+        <Literal>Instrumento de percusión de sonido determinado con láminas de madera (usualmente palisandro) y tubos resonadores debajo de cada una. Su registro grave y el uso de baquetas de hilo le otorgan un tono cálido y envolvente, permitiendo la ejecución de armonías complejas a cuatro baquetas.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/accion"/>
@@ -3507,6 +4292,16 @@
         <Literal>Activo</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Piano_CuerdaPercutida_A"/>
+        <Literal>Instrumento de teclado equipado con una compleja acción mecánica donde macillos recubiertos de fieltro golpean las cuerdas. Su diseño permite una respuesta dinámica de altísima precisión, logrando desde ataques percusivos sumamente contundentes hasta texturas armónicas muy delicadas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Piano_CuerdaPercutida_B"/>
+        <Literal>Variante de la familia de cuerdas percutidas con teclado, destacada por su arquitectura acústica integral. Su extensa tabla armónica y mecanismo de escape le otorgan la capacidad de sostener complejas polifonías y proyectar el sonido por encima de grandes densidades orquestales.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/compositor"/>
         <NamedIndividual IRI="/Precipitato_Prokofiev"/>
         <Literal>Sergei Prokofiev</Literal>
@@ -3660,6 +4455,16 @@
         <DataProperty IRI="/ambito"/>
         <NamedIndividual IRI="/Tecnica_Scordatura_Violin_Barroco"/>
         <Literal>Escordatura</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Timbal_Orquestal"/>
+        <Literal>Instrumento de percusión de membrana afinable, compuesto por un gran cuenco de cobre y un sistema de tensión por pedales. Es el pilar rítmico y armónico de la percusión sinfónica, capaz de generar un bajo resonante y dramáticos crescendos mediante redobles.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Timbal_Sinfonico_2"/>
+        <Literal>Complemento indispensable en el set orquestal moderno. Al estar afinado a una frecuencia distinta al timbal principal, expande el rango tonal del ejecutante, permitiendo rápidos cambios armónicos y sosteniendo la estructura tonal exigida en composiciones desde el período clásico al contemporáneo.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/compositor"/>
@@ -3882,6 +4687,26 @@
         <Literal>Cuerda frotada</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Vibrafono_Pro"/>
+        <Literal>Instrumento electroacústico de percusión con láminas de aluminio y pedal de sustain. Se distingue por su motor eléctrico que hace girar discos dentro de los tubos resonadores, generando su inconfundible efecto de vibrato continuo, fundamental en ensambles de jazz y música moderna.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Viola_ArcoTradicional"/>
+        <Literal>Instrumento de cuerda frotada de registro intermedio, afinado una quinta más grave que el violín. Su timbre oscuro y cálido actúa como el tejido armónico conector entre los violines y los violonchelos.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Violin_ArcoTradicional"/>
+        <Literal>Instrumento de cuerda frotada enfocado en la técnica clásica de arco con cerdas de crin. La fricción sostenida y controlada sobre las cuerdas permite un dominio absoluto del sustain, el fraseo dinámico y las articulaciones complejas exigidas en el repertorio de cámara y sinfónico estándar.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Violonchelo_ArcoTradicional"/>
+        <Literal>Instrumento de cuerda frotada de registro grave. Destaca por tener el rango tímbrico más cercano a la voz humana, siendo crucial tanto como instrumento solista, melódico y como bajo continuo.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/compositor"/>
         <NamedIndividual IRI="/Vuelo_Moscardon"/>
         <Literal>Nikolai Rimsky_Korsakov</Literal>
@@ -3892,6 +4717,11 @@
         <Literal>El Vuelo del Moscardón</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/Xilofono_Orquestal"/>
+        <Literal>Instrumento de percusión formado por láminas de madera gruesa afinadas cromáticamente. Percutido con baquetas duras, ofrece un sonido seco, incisivo y de muy corta duración (sin resonadores prolongados), perfecto para articulaciones rápidas, esqueletos rítmicos y melodías muy definidas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/tipo"/>
         <NamedIndividual IRI="/acento"/>
         <Literal>Acento</Literal>
@@ -3900,6 +4730,11 @@
         <DataProperty IRI="/vibrato"/>
         <NamedIndividual IRI="/acento"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">false</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/arpa"/>
+        <Literal>Instrumento armónico de cuerda pulsada de marco triangular. Produce el sonido mediante la vibración de cuerdas al ser pellizcadas con los dedos, aportando texturas arpegiadas, glissandos fluidos y acordes etéreos a cualquier ensamble.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/extremidades"/>
@@ -3970,6 +4805,11 @@
         <DataProperty IRI="/tesitura"/>
         <NamedIndividual IRI="/c_violoncello_std"/>
         <Literal>C2-A4 (C4)</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/clarinete"/>
+        <Literal>Instrumento de viento madera de lengüeta simple y tubo cilíndrico. Posee una extraordinaria agilidad técnica y un rango dinámico expansivo que abarca desde graves profundos hasta agudos penetrantes.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/articulacion"/>
@@ -4062,6 +4902,11 @@
         <Literal>fff</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/flauta"/>
+        <Literal>Instrumento de viento madera sin lengüeta que produce sonido por la fricción del aire contra un bisel. Su agilidad sobresaliente y tono brillante lideran frecuentemente la sección melódica superior de la orquesta.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/familia"/>
         <NamedIndividual IRI="/flauta"/>
         <Literal>vientoMadera</Literal>
@@ -4087,6 +4932,11 @@
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/guitarra"/>
+        <Literal>Instrumento armónico de cuerda pulsada. Su inmensa versatilidad sonora le permite abarcar desde la polifonía de la música académica hasta ser el motor rítmico y armónico fundamental del pop y el rock.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/extremidades"/>
         <NamedIndividual IRI="/guitarra"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">6</Literal>
@@ -4105,6 +4955,11 @@
         <DataProperty IRI="/vibrato"/>
         <NamedIndividual IRI="/legato"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#boolean">true</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/mandolina"/>
+        <Literal>Instrumento de cuerda pulsada de la familia del laúd, provisto de una caja de resonancia abombada y cuerdas dobles. Su técnica característica de trémolo rápido con plectro permite sostener notas melódicas continuas con un timbre excepcionalmente brillante e incisivo.</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
         <DataProperty IRI="/articulacion"/>
@@ -4452,14 +5307,27 @@
         <Literal>Onda Cuadrada</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
+        <DataProperty IRI="#descripcion"/>
+        <NamedIndividual IRI="/violin"/>
+        <Literal>Instrumento de cuerda frotada de registro agudo. En conjunto, las secciones orquestales de primeros y segundos violines constituyen el núcleo melódico principal que guía la estructura de las obras sinfónicas.</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
         <DataProperty IRI="/articulacion"/>
         <NamedIndividual IRI="/violin"/>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#float">8.5</Literal>
     </DataPropertyAssertion>
     <InverseObjectProperties>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <ObjectProperty IRI="#compuso"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
         <ObjectProperty IRI="#esInstrumentoDe"/>
         <ObjectProperty IRI="/interpretadaPor"/>
     </InverseObjectProperties>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <Class IRI="/Obra"/>
+    </ObjectPropertyDomain>
     <ObjectPropertyDomain>
         <ObjectProperty IRI="#esInstrumentoDe"/>
         <Class IRI="/Instrumento"/>
@@ -4521,6 +5389,10 @@
         <Class IRI="/Obra"/>
     </ObjectPropertyDomain>
     <ObjectPropertyRange>
+        <ObjectProperty IRI="#compuestaPor"/>
+        <Class IRI="#Compositor"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
         <ObjectProperty IRI="#esInstrumentoDe"/>
         <Class IRI="/Obra"/>
     </ObjectPropertyRange>
@@ -4580,6 +5452,14 @@
         <ObjectProperty IRI="/usaTecnica"/>
         <Class IRI="/Tecnica"/>
     </ObjectPropertyRange>
+    <DataPropertyDomain>
+        <DataProperty IRI="#descripcion"/>
+        <Class IRI="#Compositor"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#descripcion"/>
+        <Class IRI="/Instrumento"/>
+    </DataPropertyDomain>
     <DataPropertyDomain>
         <DataProperty IRI="/accion"/>
         <Class IRI="/Control"/>
@@ -4800,6 +5680,10 @@
         <DataProperty IRI="/volumen"/>
         <Class IRI="/Cuerpo"/>
     </DataPropertyDomain>
+    <DataPropertyRange>
+        <DataProperty IRI="#descripcion"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
     <DataPropertyRange>
         <DataProperty IRI="/accion"/>
         <Datatype abbreviatedIRI="xsd:string"/>
