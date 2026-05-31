@@ -148,7 +148,7 @@ export default function HomePage() {
   const tieneBusqueda = ultimaBusqueda !== '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+    <div className="min-h-screen">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
@@ -251,6 +251,16 @@ export default function HomePage() {
                     description={resultado.descripcion}
                     source={resultado.origen}
                     uri={resultado.uri}
+                    abstract={resultado.abstract}
+                    birthDate={resultado.birthDate}
+                    deathDate={resultado.deathDate}
+                    genres={resultado.genres}
+                    instruments={resultado.instruments}
+                    birthPlaces={resultado.birthPlaces}
+                    nationalities={resultado.nationalities}
+                    notableWorks={resultado.notableWorks}
+                    thumbnail={resultado.thumbnail}
+                    wikipediaPage={resultado.wikipediaPage}
                   />
                 ))}
               </div>

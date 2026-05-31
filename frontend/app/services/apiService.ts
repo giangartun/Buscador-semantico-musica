@@ -10,6 +10,16 @@ export interface SearchResult {
   descripcion?: string;
   uri?: string;
   origen: string;
+  abstract?: string;
+  birthDate?: string;
+  deathDate?: string;
+  genres?: string[];
+  instruments?: string[];
+  birthPlaces?: string[];
+  nationalities?: string[];
+  notableWorks?: string[];
+  thumbnail?: string;
+  wikipediaPage?: string;
 }
 
 export interface SearchResponse {
@@ -19,14 +29,27 @@ export interface SearchResponse {
 }
 
 interface BackendSearchResult {
+  id?: string;
   nombre: string;
   clases: string[];
+  descripcion?: string;
+  uri?: string;
 }
 
 interface BackendDbpediaResult {
   nombre: string;
   descripcion: string;
   uri_dbpedia: string;
+  abstract?: string;
+  birthDate?: string;
+  deathDate?: string;
+  genres?: string[];
+  instruments?: string[];
+  birthPlaces?: string[];
+  nationalities?: string[];
+  notableWorks?: string[];
+  thumbnail?: string;
+  wikipediaPage?: string;
 }
 
 interface BackendResponse<T> {
@@ -108,9 +131,11 @@ async function consultarTexto(
   );
 
   return response.resultados.map((resultado) => ({
-    id: `texto-${resultado.nombre}`,
+    id: resultado.id ?? `texto-${resultado.nombre}`,
     nombre: resultado.nombre,
     clases: resultado.clases,
+    descripcion: resultado.descripcion,
+    uri: resultado.uri,
     origen: 'Texto local',
   }));
 }
@@ -125,9 +150,11 @@ async function consultarClase(
   );
 
   return response.resultados.map((resultado) => ({
-    id: `clase-${resultado.nombre}`,
+    id: resultado.id ?? `clase-${resultado.nombre}`,
     nombre: resultado.nombre,
     clases: resultado.clases,
+    descripcion: resultado.descripcion,
+    uri: resultado.uri,
     origen: `Clase: ${termino}`,
   }));
 }
@@ -160,9 +187,19 @@ async function consultarDbpedia(
       id: `dbpedia-${resultado.uri_dbpedia}`,
       nombre: resultado.nombre,
       clases: ['DBpedia'],
-      descripcion: resultado.descripcion,
+      descripcion: resultado.abstract ?? resultado.descripcion,
       uri: resultado.uri_dbpedia,
       origen: 'DBpedia',
+      abstract: resultado.abstract,
+      birthDate: resultado.birthDate,
+      deathDate: resultado.deathDate,
+      genres: resultado.genres,
+      instruments: resultado.instruments,
+      birthPlaces: resultado.birthPlaces,
+      nationalities: resultado.nationalities,
+      notableWorks: resultado.notableWorks,
+      thumbnail: resultado.thumbnail,
+      wikipediaPage: resultado.wikipediaPage,
     }));
   } finally {
     window.clearTimeout(timeoutId);

@@ -8,6 +8,7 @@ import motor_semantico  # Acceso directo a nuestra ontología en memoria RAM
 
 # Configuración de Endpoints usando lookup
 DBPEDIA_LOOKUP_ENDPOINT = "https://lookup.dbpedia.org/api/search"
+DBPEDIA_SPARQL_ENDPOINT = "https://dbpedia.org/sparql"
 
 # Diccionario de mapeo directo para música clásica.
 # Esto garantiza que cuando busquen autores clave, el enlace a DBpedia sea instantáneo e infalible.
@@ -35,6 +36,111 @@ PHRASE_RESOURCE_MAP = {
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}
 
+def _safe_first(values, default=None):
+    if not values:
+        return default
+    return values[0]
+
+def consultar_dbpedia_detalles(uri):
+    """
+    Obtiene mas campos desde DBpedia por SPARQL (abstract, fechas, genero, instrumento, imagen, lugar, nacionalidad, obras).
+    """
+    query = f"""
+    PREFIX dbo: <http://dbpedia.org/ontology/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+    SELECT ?abstract ?birthDate ?deathDate ?genreLabel ?instrumentLabel ?birthPlaceLabel ?nationalityLabel ?notableWorkLabel ?thumbnail ?wiki
+    WHERE {{
+        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "en") }}
+        OPTIONAL {{ <{uri}> dbo:birthDate ?birthDate . }}
+        OPTIONAL {{ <{uri}> dbo:deathDate ?deathDate . }}
+        OPTIONAL {{ <{uri}> dbo:genre ?genre . ?genre rdfs:label ?genreLabel . FILTER(lang(?genreLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:instrument ?instrument . ?instrument rdfs:label ?instrumentLabel . FILTER(lang(?instrumentLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:birthPlace ?birthPlace . ?birthPlace rdfs:label ?birthPlaceLabel . FILTER(lang(?birthPlaceLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:nationality ?nationality . ?nationality rdfs:label ?nationalityLabel . FILTER(lang(?nationalityLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:notableWork ?notableWork . ?notableWork rdfs:label ?notableWorkLabel . FILTER(lang(?notableWorkLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:thumbnail ?thumbnail . }}
+        OPTIONAL {{ <{uri}> foaf:isPrimaryTopicOf ?wiki . }}
+    }}
+    """
+
+    url = f"{DBPEDIA_SPARQL_ENDPOINT}?query={quote(query)}&format=json"
+    request = Request(
+        url,
+        headers={
+            "Accept": "application/sparql-results+json",
+            "User-Agent": "SemanticMusicApp-Academic/1.0",
+        },
+    )
+
+    try:
+        with urlopen(request, timeout=6) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except Exception:
+        return {}
+
+    rows = data.get("results", {}).get("bindings", [])
+    if not rows:
+        return {}
+
+    abstract = None
+    birth_date = None
+    death_date = None
+    thumbnail = None
+    wikipedia = None
+    genres = set()
+    instruments = set()
+    birth_places = set()
+    nationalities = set()
+    notable_works = set()
+
+    for row in rows:
+        if not abstract:
+            abstract = row.get("abstract", {}).get("value")
+        if not birth_date:
+            birth_date = row.get("birthDate", {}).get("value")
+        if not death_date:
+            death_date = row.get("deathDate", {}).get("value")
+        if not thumbnail:
+            thumbnail = row.get("thumbnail", {}).get("value")
+        if not wikipedia:
+            wikipedia = row.get("wiki", {}).get("value")
+
+        genre_label = row.get("genreLabel", {}).get("value")
+        if genre_label:
+            genres.add(genre_label)
+
+        instrument_label = row.get("instrumentLabel", {}).get("value")
+        if instrument_label:
+            instruments.add(instrument_label)
+
+        birth_place_label = row.get("birthPlaceLabel", {}).get("value")
+        if birth_place_label:
+            birth_places.add(birth_place_label)
+
+        nationality_label = row.get("nationalityLabel", {}).get("value")
+        if nationality_label:
+            nationalities.add(nationality_label)
+
+        notable_work_label = row.get("notableWorkLabel", {}).get("value")
+        if notable_work_label:
+            notable_works.add(notable_work_label)
+
+    return {
+        "abstract": abstract,
+        "birthDate": birth_date,
+        "deathDate": death_date,
+        "genres": sorted(genres),
+        "instruments": sorted(instruments),
+        "birthPlaces": sorted(birth_places),
+        "nationalities": sorted(nationalities),
+        "notableWorks": sorted(notable_works),
+        "thumbnail": thumbnail,
+        "wikipediaPage": wikipedia,
+    }
+
 def consultar_por_sparql_local(texto_busqueda):
     """
     Ejecuta una consulta SPARQL nativa utilizando el motor interno de Owlready2.
@@ -45,6 +151,8 @@ def consultar_por_sparql_local(texto_busqueda):
 
     print(f"\n[SPARQL Local] Buscando instancias locales que coincidan con: '{texto_busqueda}'...")
     query = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
     SELECT ?individuo ?clase
     WHERE {{
         ?individuo rdf:type ?clase .
@@ -77,12 +185,20 @@ def consultar_dbpedia_artistas(nombre_artista):
         resultados = []
         for res in recursos:
             # Construimos un objeto limpio simulando la respuesta
+            uri = f"http://dbpedia.org/resource/{res}"
+            detalles = consultar_dbpedia_detalles(uri)
+
             resultados.append({
                 "uri_dbpedia": f"http://dbpedia.org/resource/{res}",
                 "nombre": res.replace("_", " "),
-                "descripcion": f"Recurso histórico musical de alta relevancia en DBpedia sobre {res.replace('_', ' ')}."
+                "descripcion": f"Recurso histórico musical de alta relevancia en DBpedia sobre {res.replace('_', ' ')}.",
+                **detalles,
             })
-        poblar_ontologia_con_dbpedia(resultados, "Artista")
+
+        # Evita bloquear la respuesta si la ontologia no esta cargada.
+        if motor_semantico._onto_instancia is not None:
+            poblar_ontologia_con_dbpedia(resultados, "Artista")
+
         return resultados
 
     # Estrategia 2: Si no está en el mapa, usamos DBpedia Lookup de forma dinámica
@@ -120,15 +236,18 @@ def consultar_dbpedia_artistas(nombre_artista):
                 if len(desc) > 200: 
                     desc = desc[:200] + "..."
 
+                detalles = consultar_dbpedia_detalles(uri)
                 resultados_limpios.append({
                     "uri_dbpedia": uri,
                     "nombre": nombre,
-                    "descripcion": desc
+                    "descripcion": desc,
+                    **detalles,
                 })
 
         if resultados_limpios:
-            # Poblamos sobre nuestra ontología activa
-            poblar_ontologia_con_dbpedia(resultados_limpios, "Artista")
+            # Poblamos sobre nuestra ontologia activa si ya esta en memoria
+            if motor_semantico._onto_instancia is not None:
+                poblar_ontologia_con_dbpedia(resultados_limpios, "Artista")
             return resultados_limpios
 
         return []

@@ -31,7 +31,12 @@ def api_semantic_queries(query_name):
 
     # Captura el parámetro opcional si la consulta lo requiere (ej. ?param=Mozart)
     param = request.args.get('param')
-    resultados = ejecutar_consulta_semantica_musical(query_name, param)
+
+    if info.get("requires_param") and not param:
+        return jsonify({"error": "Falta el parámetro 'param' para esta consulta."}), 400
+
+    handler = info.get("handler")
+    resultados = handler(param) if info.get("requires_param") else handler()
 
     return jsonify({
         "title": info["title"],
@@ -85,18 +90,19 @@ def api_clases():
 def api_buscar():
     palabra_clave = request.args.get('texto')
     nombre_clase = request.args.get('clase')
-    consulta_semantica = detectar_consulta_semantica(palabra_clave)
+    consulta_semantica, consulta_param = detectar_consulta_semantica(palabra_clave or "")
     if nombre_clase:
         resultados = buscar_individuos_por_clase(nombre_clase)
     elif palabra_clave:
         if consulta_semantica:
             resultados = ejecutar_consulta_semantica_musical(
-            consulta_semantica
-        )
+                consulta_semantica,
+                consulta_param
+            )
         else:
             resultados = buscar_por_texto(
-            palabra_clave
-         )
+                palabra_clave
+            )
     else:
 
         return jsonify({

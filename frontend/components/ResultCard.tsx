@@ -4,6 +4,16 @@ interface ResultCardProps {
   classes?: string[];
   source: string;
   uri?: string;
+  abstract?: string;
+  birthDate?: string;
+  deathDate?: string;
+  genres?: string[];
+  instruments?: string[];
+  birthPlaces?: string[];
+  nationalities?: string[];
+  notableWorks?: string[];
+  thumbnail?: string;
+  wikipediaPage?: string;
 }
 
 export default function ResultCard({
@@ -12,8 +22,26 @@ export default function ResultCard({
   classes = [],
   source,
   uri,
+  abstract,
+  birthDate,
+  deathDate,
+  genres,
+  instruments,
+  birthPlaces,
+  nationalities,
+  notableWorks,
+  thumbnail,
+  wikipediaPage,
 }: ResultCardProps) {
   const sourceIsDbpedia = source.includes('DBpedia');
+  const hasExtraDbpedia =
+    sourceIsDbpedia &&
+    (abstract || birthDate || deathDate || (genres && genres.length > 0) ||
+      (instruments && instruments.length > 0) ||
+      (birthPlaces && birthPlaces.length > 0) ||
+      (nationalities && nationalities.length > 0) ||
+      (notableWorks && notableWorks.length > 0) ||
+      thumbnail || wikipediaPage);
 
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-200">
@@ -91,6 +119,140 @@ export default function ResultCard({
               </svg>
             </a>
           )}
+        </div>
+      )}
+
+      {hasExtraDbpedia && (
+        <div className="px-5 pb-5">
+          <div className="border border-slate-100 dark:border-slate-800 rounded-lg p-4 bg-slate-50/40 dark:bg-slate-900/40">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+              Detalle DBpedia
+            </p>
+
+            {thumbnail && (
+              <img
+                src={thumbnail}
+                alt={title}
+                className="w-full max-h-56 object-contain rounded-md mb-3"
+                loading="lazy"
+              />
+            )}
+
+            {abstract && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                {abstract}
+              </p>
+            )}
+
+            {(birthDate || deathDate) && (
+              <div className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                {birthDate && <span>Nacimiento: {birthDate}</span>}
+                {birthDate && deathDate && <span> · </span>}
+                {deathDate && <span>Fallecimiento: {deathDate}</span>}
+              </div>
+            )}
+
+            {genres && genres.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                  Generos
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {genres.map((genre) => (
+                    <span
+                      key={genre}
+                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {instruments && instruments.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                  Instrumentos
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {instruments.map((instrument) => (
+                    <span
+                      key={instrument}
+                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
+                    >
+                      {instrument}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {birthPlaces && birthPlaces.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                  Lugar de nacimiento
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {birthPlaces.map((place) => (
+                    <span
+                      key={place}
+                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
+                    >
+                      {place}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {nationalities && nationalities.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                  Nacionalidad
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {nationalities.map((nation) => (
+                    <span
+                      key={nation}
+                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
+                    >
+                      {nation}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {notableWorks && notableWorks.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                  Obras destacadas
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {notableWorks.map((work) => (
+                    <span
+                      key={work}
+                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
+                    >
+                      {work}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {wikipediaPage && (
+              <a
+                href={wikipediaPage}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Ver en Wikipedia
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>

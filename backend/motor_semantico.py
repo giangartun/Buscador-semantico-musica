@@ -308,48 +308,50 @@ def q_obras_por_autor(param):
             if p in normalize_text(serialize_element(ind)["autor"])]
 
 SEMANTIC_QUERY_MAP = {
-
-    "instrumentos de cuerda":
-        "instrumentos_cuerda",
-
-    "instrumentos de viento":
-        "instrumentos_viento",
-
-    "instrumentos de percusion":
-        "instrumentos_percusion",
-
-    "instrumentos de percusión":
-        "instrumentos_percusion",
-
-    "obras romanticas":
-        "obras_romanticas",
-
-    "obras románticas":
-        "obras_romanticas",
-
-    "obras de mozart":
-        "obras_por_autor",
-
-    "obras de chopin":
-        "obras_por_autor",
-
-    "obras de bach":
-        "obras_por_autor",
-
-    "obras de beethoven":
-        "obras_por_autor",
+    "instrumentos de cuerda": {
+        "query": "instrumentos_cuerda",
+    },
+    "instrumentos de viento": {
+        "query": "instrumentos_viento",
+    },
+    "instrumentos de percusion": {
+        "query": "instrumentos_percusion",
+    },
+    "instrumentos de percusión": {
+        "query": "instrumentos_percusion",
+    },
+    "obras romanticas": {
+        "query": "obras_romanticas",
+    },
+    "obras románticas": {
+        "query": "obras_romanticas",
+    },
+    "obras de mozart": {
+        "query": "obras_por_autor",
+        "param": "mozart",
+    },
+    "obras de chopin": {
+        "query": "obras_por_autor",
+        "param": "chopin",
+    },
+    "obras de bach": {
+        "query": "obras_por_autor",
+        "param": "bach",
+    },
+    "obras de beethoven": {
+        "query": "obras_por_autor",
+        "param": "beethoven",
+    },
 }
 
 def detectar_consulta_semantica(texto):
-
     texto = normalize_text(texto)
 
-    for frase, consulta in SEMANTIC_QUERY_MAP.items():
-
+    for frase, info in SEMANTIC_QUERY_MAP.items():
         if normalize_text(frase) in texto:
-            return consulta
+            return info.get("query"), info.get("param")
 
-    return None
+    return None, None
 
 def ejecutar_consulta_semantica_musical(query_name, param=None):
     """Router central dinámico para invocar las consultas de lógica técnica."""
@@ -357,6 +359,10 @@ def ejecutar_consulta_semantica_musical(query_name, param=None):
         "obras_complejas_piano": q_obras_complejas_piano,
         "autores_periodo_romantico": q_autores_periodo_romantico,
         "instrumentos_viento_madera": q_instrumentos_viento_madera,
+        "instrumentos_cuerda": q_instrumentos_cuerda,
+        "instrumentos_viento": q_instrumentos_viento,
+        "instrumentos_percusion": q_instrumentos_percusion,
+        "obras_romanticas": q_obras_romanticas,
     }
     queries_with_param = {
         "obras_por_autor": q_obras_por_autor,
