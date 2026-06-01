@@ -90,25 +90,41 @@ def api_clases():
 def api_buscar():
     palabra_clave = request.args.get('texto')
     nombre_clase = request.args.get('clase')
-    consulta_semantica, consulta_param = detectar_consulta_semantica(palabra_clave or "")
+    
+    resultados = []
+
+    # 1. Caso: Se solicita filtrar estrictamente por clase de la ontología
     if nombre_clase:
-        resultados = buscar_individuos_por_clase(nombre_clase)
+        try:
+            resultados = buscar_individuos_por_clase(nombre_clase)
+        except Exception as e:
+            print(f"[Error] Falló la búsqueda por clase '{nombre_clase}': {e}")
+            resultados = []
+
+    # 2. Caso: Se solicita búsqueda por texto libre (O procesar consultas semánticas complejas)
     elif palabra_clave:
+        consulta_semantica, consulta_param = detectar_consulta_semantica(palabra_clave)
+        
         if consulta_semantica:
             resultados = ejecutar_consulta_semantica_musical(
                 consulta_semantica,
                 consulta_param
             )
         else:
-            resultados = buscar_por_texto(
-                palabra_clave
-            )
+            resultados = buscar_por_texto(palabra_clave)
+            
     else:
-
         return jsonify({
             "error": "Debes proporcionar el parámetro 'texto' o 'clase' en la URL."
         }), 400
-        
+
+    # 3. Filtro de intersección esencial: Si mandaron AMBOS parámetros (?texto=...&clase=...)
+    # Evita el crash cruzando los resultados de texto sobre la clase seleccionada en memoria segura.
+    if palabra_clave and nombre_clase and resultados:
+        from motor_semantico import normalize_text
+        token = normalize_text(palabra_clave)
+        resultados = [r for r in resultados if token in normalize_text(r.get("nombre", "")) or token in normalize_text(r.get("descripcion", ""))]
+
     return jsonify({
         "total": len(resultados),
         "resultados": resultados
