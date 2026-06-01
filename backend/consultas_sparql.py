@@ -36,15 +36,26 @@ PHRASE_RESOURCE_MAP = {
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}
 
+SUPPORTED_LANGS = {"es", "en", "fr"}
+
+def _normalize_lang(lang):
+    if not lang:
+        return "es"
+    lang = str(lang).lower()
+    return lang if lang in SUPPORTED_LANGS else "es"
+
 def _safe_first(values, default=None):
     if not values:
         return default
     return values[0]
 
-def consultar_dbpedia_detalles(uri):
+def consultar_dbpedia_detalles(uri, lang="es"):
     """
     Obtiene mas campos desde DBpedia por SPARQL (abstract, fechas, genero, instrumento, imagen, lugar, nacionalidad, obras).
     """
+    lang_code = _normalize_lang(lang)
+    fallback_lang = "en" if lang_code != "en" else "es"
+
     query = f"""
     PREFIX dbo: <http://dbpedia.org/ontology/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -52,15 +63,15 @@ def consultar_dbpedia_detalles(uri):
 
     SELECT ?abstract ?birthDate ?deathDate ?genreLabel ?instrumentLabel ?birthPlaceLabel ?nationalityLabel ?notableWorkLabel ?thumbnail ?wiki
     WHERE {{
-        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "es") }}
-        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "en") }}
+        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "{fallback_lang}") }}
         OPTIONAL {{ <{uri}> dbo:birthDate ?birthDate . }}
         OPTIONAL {{ <{uri}> dbo:deathDate ?deathDate . }}
-        OPTIONAL {{ <{uri}> dbo:genre ?genre . ?genre rdfs:label ?genreLabel . FILTER(lang(?genreLabel) = "es") }}
-        OPTIONAL {{ <{uri}> dbo:instrument ?instrument . ?instrument rdfs:label ?instrumentLabel . FILTER(lang(?instrumentLabel) = "es") }}
-        OPTIONAL {{ <{uri}> dbo:birthPlace ?birthPlace . ?birthPlace rdfs:label ?birthPlaceLabel . FILTER(lang(?birthPlaceLabel) = "es") }}
-        OPTIONAL {{ <{uri}> dbo:nationality ?nationality . ?nationality rdfs:label ?nationalityLabel . FILTER(lang(?nationalityLabel) = "es") }}
-        OPTIONAL {{ <{uri}> dbo:notableWork ?notableWork . ?notableWork rdfs:label ?notableWorkLabel . FILTER(lang(?notableWorkLabel) = "es") }}
+        OPTIONAL {{ <{uri}> dbo:genre ?genre . ?genre rdfs:label ?genreLabel . FILTER(lang(?genreLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:instrument ?instrument . ?instrument rdfs:label ?instrumentLabel . FILTER(lang(?instrumentLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:birthPlace ?birthPlace . ?birthPlace rdfs:label ?birthPlaceLabel . FILTER(lang(?birthPlaceLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:nationality ?nationality . ?nationality rdfs:label ?nationalityLabel . FILTER(lang(?nationalityLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:notableWork ?notableWork . ?notableWork rdfs:label ?notableWorkLabel . FILTER(lang(?notableWorkLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:thumbnail ?thumbnail . }}
         OPTIONAL {{ <{uri}> foaf:isPrimaryTopicOf ?wiki . }}
     }}
@@ -170,11 +181,12 @@ def consultar_por_sparql_local(texto_busqueda):
         print(f"[SPARQL] Error interno: {e}")
         return []
 
-def consultar_dbpedia_artistas(nombre_artista):
+def consultar_dbpedia_artistas(nombre_artista, lang="es"):
     """
     Consulta remota utilizando la estrategia híbrida ganadora del otro grupo:
     Usa el diccionario directo o ataca la API de DBpedia Lookup de forma infalible.
     """
+    lang = _normalize_lang(lang)
     termino_limpio = nombre_artista.strip().lower()
     print(f"\n[DBpedia] Buscando información externa para: '{nombre_artista}'...")
 
@@ -186,7 +198,7 @@ def consultar_dbpedia_artistas(nombre_artista):
         for res in recursos:
             # Construimos un objeto limpio simulando la respuesta
             uri = f"http://dbpedia.org/resource/{res}"
-            detalles = consultar_dbpedia_detalles(uri)
+            detalles = consultar_dbpedia_detalles(uri, lang)
 
             resultados.append({
                 "uri_dbpedia": f"http://dbpedia.org/resource/{res}",
@@ -236,7 +248,7 @@ def consultar_dbpedia_artistas(nombre_artista):
                 if len(desc) > 200: 
                     desc = desc[:200] + "..."
 
-                detalles = consultar_dbpedia_detalles(uri)
+                detalles = consultar_dbpedia_detalles(uri, lang)
                 resultados_limpios.append({
                     "uri_dbpedia": uri,
                     "nombre": nombre,

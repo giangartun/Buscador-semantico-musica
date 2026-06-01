@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Buscador Semantico",
+    "subtitle": "Ontologia de Instrumentos Musicales",
+    "backendOk": "Backend conectado",
+    "backendFail": "Backend no conectado",
+    "searching": "Buscando en {mode}...",
+    "emptyState": "Busca instrumentos, conceptos o recursos enlazados",
+    "resultsSummary": {
+      "one": "{total} resultado para \"{query}\" en {mode}",
+      "other": "{total} resultados para \"{query}\" en {mode}"
+    },
+    "noResults": {
+      "default": "No se encontraron resultados.",
+      "class": "No se encontraron individuos para esa clase.",
+      "dbpedia": "DBpedia no devolvio resultados para esta busqueda."
+    }
+  },
+  "search": {
+    "placeholder": "Buscar instrumento, clase o recurso en DBpedia...",
+    "button": "Buscar",
+    "clear": "Vaciar texto",
+    "loading": "..."
+  },
+  "modes": {
+    "all": "Todo",
+    "text": "Texto",
+    "class": "Clase",
+    "dbpedia": "DBpedia"
+  },
+  "errors": {
+    "backendQuery": "No se pudo consultar {mode}. El backend puede seguir activo."
+  },
+  "warnings": {
+    "dbpediaTimeout": "DBpedia no respondio dentro del tiempo esperado.",
+    "dbpediaPartial": "DBpedia no respondio. Se muestran los resultados locales encontrados."
+  },
+  "result": {
+    "sourceLabel": "Fuente",
+    "categories": "Categorias",
+    "viewDbpedia": "Ver en DBpedia",
+    "dbpediaDetails": "Detalle DBpedia",
+    "birth": "Nacimiento",
+    "death": "Fallecimiento",
+    "genres": "Generos",
+    "instruments": "Instrumentos",
+    "birthPlace": "Lugar de nacimiento",
+    "nationality": "Nacionalidad",
+    "notableWorks": "Obras destacadas",
+    "viewWikipedia": "Ver en Wikipedia"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Espanol",
+    "en": "Ingles",
+    "fr": "Frances"
+  }
+}

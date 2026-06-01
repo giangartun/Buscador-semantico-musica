@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
+import { useI18n } from './language/LanguageProvider';
 import {
   buscar,
   verificarSaludBackend,
@@ -11,30 +12,39 @@ import {
   SearchResult,
 } from './services/apiService';
 
-const MODOS: Array<{ id: SearchMode; texto: string }> = [
-  { id: 'todo', texto: 'Todo' },
-  { id: 'texto', texto: 'Texto' },
-  { id: 'clase', texto: 'Clase' },
-  { id: 'dbpedia', texto: 'DBpedia' },
-];
-
-function nombreModo(modo: SearchMode): string {
-  return MODOS.find((item) => item.id === modo)?.texto ?? 'Todo';
-}
-
-function mensajeSinResultados(modo: SearchMode): string {
-  if (modo === 'clase') {
-    return 'No se encontraron individuos para esa clase.';
-  }
-
-  if (modo === 'dbpedia') {
-    return 'DBpedia no devolvió resultados para esta búsqueda.';
-  }
-
-  return 'No se encontraron resultados.';
-}
+const LOCALES = ['es', 'en', 'fr'] as const;
 
 export default function HomePage() {
+  const { locale, setLocale, t } = useI18n();
+
+  const MODOS: Array<{ id: SearchMode; texto: string }> = useMemo(
+    () => [
+      { id: 'todo', texto: t('modes.all') },
+      { id: 'texto', texto: t('modes.text') },
+      { id: 'clase', texto: t('modes.class') },
+      { id: 'dbpedia', texto: t('modes.dbpedia') },
+    ],
+    [t]
+  );
+
+  const nombreModo = useCallback(
+    (modo: SearchMode): string =>
+      MODOS.find((item) => item.id === modo)?.texto ?? t('modes.all'),
+    [MODOS, t]
+  );
+
+  function mensajeSinResultados(modo: SearchMode): string {
+    if (modo === 'clase') {
+      return t('app.noResults.class');
+    }
+
+    if (modo === 'dbpedia') {
+      return t('app.noResults.dbpedia');
+    }
+
+    return t('app.noResults.default');
+  }
+
   const [texto, setTexto] = useState('');
   const [ultimaBusqueda, setUltimaBusqueda] = useState('');
   const [modo, setModo] = useState<SearchMode>('todo');
@@ -97,7 +107,8 @@ export default function HomePage() {
             if (!controller.signal.aborted) {
               aplicarRespuesta(respuestaParcial);
             }
-          }
+          },
+          locale
         );
 
         if (!controller.signal.aborted) {
@@ -108,9 +119,7 @@ export default function HomePage() {
           return;
         }
 
-        setError(
-          `No se pudo consultar ${nombreModo(fuente)}. El backend puede seguir activo.`
-        );
+        setError(t('errors.backendQuery', { mode: nombreModo(fuente) }));
       } finally {
         if (abortControllerRef.current === controller) {
           abortControllerRef.current = null;
@@ -118,7 +127,7 @@ export default function HomePage() {
         }
       }
     },
-    [aplicarRespuesta]
+    [aplicarRespuesta, locale, nombreModo, t]
   );
 
   const handleSearch = useCallback(
@@ -147,27 +156,49 @@ export default function HomePage() {
 
   const tieneBusqueda = ultimaBusqueda !== '';
 
+  const resumenKey = total === 1 ? 'app.resultsSummary.one' : 'app.resultsSummary.other';
+
   return (
     <div className="min-h-screen">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-            🎵 Buscador Semántico
+            🎵 {t('app.title')}
           </h1>
 
           <p className="text-gray-500 dark:text-gray-400">
-            Ontología de Instrumentos Musicales
+            {t('app.subtitle')}
           </p>
 
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-gray-400">
+            <span className="uppercase tracking-wide">
+              {t('language.label')}
+            </span>
+            {LOCALES.map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => setLocale(code)}
+                className={`px-2 py-1 rounded-full border transition-colors ${
+                  locale === code
+                    ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
+                    : 'border-slate-200 text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                }`}
+              >
+                {t(`language.${code}`)}
+              </button>
+            ))}
+          </div>
+
           {backendActivo === true && (
-            <span className="inline-block mt-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">
-              Backend conectado
+            <span className="inline-block mt-3 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">
+              {t('app.backendOk')}
             </span>
           )}
 
           {backendActivo === false && (
-            <span className="inline-block mt-2 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs rounded-full">
-              Backend no conectado
+            <span className="inline-block mt-3 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs rounded-full">
+              {t('app.backendFail')}
             </span>
           )}
         </div>
@@ -179,7 +210,10 @@ export default function HomePage() {
             onSearch={handleSearch}
             onClearInput={handleClearInput}
             isLoading={isSearching}
-            placeholder="Buscar instrumento, clase o recurso en DBpedia..."
+            placeholder={t('search.placeholder')}
+            submitLabel={t('search.button')}
+            clearLabel={t('search.clear')}
+            loadingLabel={t('search.loading')}
           />
 
           <div className="flex items-center gap-2 mt-3">
@@ -203,7 +237,7 @@ export default function HomePage() {
         {isSearching && (
           <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500" />
-            <span>Buscando en {nombreModo(modoResultado)}...</span>
+            <span>{t('app.searching', { mode: nombreModo(modoResultado) })}</span>
           </div>
         )}
 
@@ -226,9 +260,7 @@ export default function HomePage() {
         {!tieneBusqueda && !isSearching && (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🎶</div>
-            <p className="text-gray-500">
-              Busca instrumentos, conceptos o recursos enlazados
-            </p>
+            <p className="text-gray-500">{t('app.emptyState')}</p>
           </div>
         )}
 
@@ -236,8 +268,11 @@ export default function HomePage() {
           <>
             <div className="flex justify-between items-center mb-3">
               <p className="text-sm text-gray-500">
-                {total} resultado{total !== 1 ? 's' : ''} para &quot;
-                {ultimaBusqueda}&quot; en {nombreModo(modoResultado)}
+                {t(resumenKey, {
+                  total,
+                  query: ultimaBusqueda,
+                  mode: nombreModo(modoResultado),
+                })}
               </p>
             </div>
 

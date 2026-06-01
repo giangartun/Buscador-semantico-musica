@@ -8,6 +8,9 @@ interface SearchBarProps {
   onSearch: (query: string) => void;
   onClearInput: () => void;
   placeholder?: string;
+  submitLabel?: string;
+  clearLabel?: string;
+  loadingLabel?: string;
   isLoading?: boolean;
 }
 
@@ -17,6 +20,9 @@ export default function SearchBar({
   onSearch,
   onClearInput,
   placeholder = 'Buscar...',
+  submitLabel = 'Buscar',
+  clearLabel = 'Vaciar texto',
+  loadingLabel = '...',
   isLoading = false,
 }: SearchBarProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -46,7 +52,7 @@ export default function SearchBar({
               type="button"
               onClick={onClearInput}
               className="px-2 py-1 text-gray-400 hover:text-gray-600 text-sm"
-              aria-label="Vaciar texto"
+              aria-label={clearLabel}
             >
               ✕
             </button>
@@ -57,7 +63,7 @@ export default function SearchBar({
             disabled={!value.trim() || isLoading}
             className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 text-sm font-medium transition"
           >
-            {isLoading ? '...' : 'Buscar'}
+            {isLoading ? loadingLabel : submitLabel}
           </button>
         </div>
       </div>

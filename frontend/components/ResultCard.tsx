@@ -1,3 +1,7 @@
+'use client';
+
+import { useI18n } from '../app/language/LanguageProvider';
+
 interface ResultCardProps {
   title: string;
   description?: string;
@@ -33,6 +37,7 @@ export default function ResultCard({
   thumbnail,
   wikipediaPage,
 }: ResultCardProps) {
+  const { t } = useI18n();
   const sourceIsDbpedia = source.includes('DBpedia');
   const hasExtraDbpedia =
     sourceIsDbpedia &&
@@ -57,7 +62,7 @@ export default function ResultCard({
             </h3>
 
             <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-              Fuente: {source}
+              {t('result.sourceLabel')}: {source}
             </p>
           </div>
         </div>
@@ -80,7 +85,7 @@ export default function ResultCard({
           {classes.length > 1 && (
             <div>
               <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                Categorías
+                {t('result.categories')}
               </p>
 
               <div className="flex flex-wrap gap-1.5">
@@ -103,7 +108,7 @@ export default function ResultCard({
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 text-sm font-medium text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800/60 rounded-lg hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors duration-150 active:scale-[0.99]"
             >
-              Ver en DBpedia
+              {t('result.viewDbpedia')}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
@@ -126,7 +131,7 @@ export default function ResultCard({
         <div className="px-5 pb-5">
           <div className="border border-slate-100 dark:border-slate-800 rounded-lg p-4 bg-slate-50/40 dark:bg-slate-900/40">
             <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-              Detalle DBpedia
+              {t('result.dbpediaDetails')}
             </p>
 
             {thumbnail && (
@@ -146,16 +151,16 @@ export default function ResultCard({
 
             {(birthDate || deathDate) && (
               <div className="text-xs text-slate-500 dark:text-slate-400 mb-3">
-                {birthDate && <span>Nacimiento: {birthDate}</span>}
+                {birthDate && <span>{t('result.birth')}: {birthDate}</span>}
                 {birthDate && deathDate && <span> · </span>}
-                {deathDate && <span>Fallecimiento: {deathDate}</span>}
+                {deathDate && <span>{t('result.death')}: {deathDate}</span>}
               </div>
             )}
 
             {genres && genres.length > 0 && (
               <div className="mb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  Generos
+                  {t('result.genres')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {genres.map((genre) => (
@@ -173,7 +178,7 @@ export default function ResultCard({
             {instruments && instruments.length > 0 && (
               <div className="mb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  Instrumentos
+                  {t('result.instruments')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {instruments.map((instrument) => (
@@ -191,7 +196,7 @@ export default function ResultCard({
             {birthPlaces && birthPlaces.length > 0 && (
               <div className="mb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  Lugar de nacimiento
+                  {t('result.birthPlace')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {birthPlaces.map((place) => (
@@ -209,7 +214,7 @@ export default function ResultCard({
             {nationalities && nationalities.length > 0 && (
               <div className="mb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  Nacionalidad
+                  {t('result.nationality')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {nationalities.map((nation) => (
@@ -227,7 +232,7 @@ export default function ResultCard({
             {notableWorks && notableWorks.length > 0 && (
               <div className="mb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  Obras destacadas
+                  {t('result.notableWorks')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {notableWorks.map((work) => (
@@ -249,7 +254,7 @@ export default function ResultCard({
                 rel="noopener noreferrer"
                 className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
               >
-                Ver en Wikipedia
+                {t('result.viewWikipedia')}
               </a>
             )}
           </div>

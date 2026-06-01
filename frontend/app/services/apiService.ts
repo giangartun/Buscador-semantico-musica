@@ -1,6 +1,21 @@
 const API_BASE_URL = 'http://127.0.0.1:5000';
 const DBPEDIA_TIMEOUT_MS = 8000;
 
+const WARNING_MESSAGES: Record<string, { timeout: string; partial: string }> = {
+  es: {
+    timeout: 'DBpedia no respondio dentro del tiempo esperado.',
+    partial: 'DBpedia no respondio. Se muestran los resultados locales encontrados.',
+  },
+  en: {
+    timeout: 'DBpedia did not respond within the expected time.',
+    partial: 'DBpedia did not respond. Showing local results found.',
+  },
+  fr: {
+    timeout: "DBpedia n'a pas repondu dans le temps imparti.",
+    partial: "DBpedia n'a pas repondu. Affichage des resultats locaux.",
+  },
+};
+
 export type SearchMode = 'todo' | 'texto' | 'clase' | 'dbpedia';
 
 export interface SearchResult {
@@ -73,6 +88,23 @@ async function obtenerJson<T>(
   return response.json() as Promise<T>;
 }
 
+function agregarIdioma(ruta: string, locale?: string): string {
+  if (!locale) {
+    return ruta;
+  }
+
+  const separator = ruta.includes('?') ? '&' : '?';
+  return `${ruta}${separator}lang=${encodeURIComponent(locale)}`;
+}
+
+function obtenerWarning(
+  locale: string | undefined,
+  key: 'timeout' | 'partial'
+): string {
+  const messages = WARNING_MESSAGES[locale ?? ''] ?? WARNING_MESSAGES.es;
+  return messages[key];
+}
+
 function esCancelacion(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError';
 }
@@ -123,10 +155,11 @@ function crearRespuesta(
 
 async function consultarTexto(
   termino: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  locale?: string
 ): Promise<SearchResult[]> {
   const response = await obtenerJson<BackendResponse<BackendSearchResult>>(
-    `/api/buscar?texto=${encodeURIComponent(termino)}`,
+    agregarIdioma(`/api/buscar?texto=${encodeURIComponent(termino)}`, locale),
     signal
   );
 
@@ -142,10 +175,11 @@ async function consultarTexto(
 
 async function consultarClase(
   termino: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  locale?: string
 ): Promise<SearchResult[]> {
   const response = await obtenerJson<BackendResponse<BackendSearchResult>>(
-    `/api/buscar?clase=${encodeURIComponent(termino)}`,
+    agregarIdioma(`/api/buscar?clase=${encodeURIComponent(termino)}`, locale),
     signal
   );
 
@@ -161,7 +195,8 @@ async function consultarClase(
 
 async function consultarDbpedia(
   termino: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  locale?: string
 ): Promise<SearchResult[]> {
   const controller = new AbortController();
 
@@ -179,7 +214,7 @@ async function consultarDbpedia(
 
   try {
     const response = await obtenerJson<BackendResponse<BackendDbpediaResult>>(
-      `/api/dbpedia?nombre=${encodeURIComponent(termino)}`,
+      agregarIdioma(`/api/dbpedia?nombre=${encodeURIComponent(termino)}`, locale),
       controller.signal
     );
 
@@ -211,7 +246,8 @@ export async function buscar(
   texto: string,
   modo: SearchMode,
   signal?: AbortSignal,
-  onUpdate?: ResultsUpdate
+  onUpdate?: ResultsUpdate,
+  locale?: string
 ): Promise<SearchResponse> {
   const termino = texto.trim();
 
@@ -220,18 +256,18 @@ export async function buscar(
   }
 
   if (modo === 'texto') {
-    const resultados = await consultarTexto(termino, signal);
+    const resultados = await consultarTexto(termino, signal, locale);
     return crearRespuesta(resultados);
   }
 
   if (modo === 'clase') {
-    const resultados = await consultarClase(termino, signal);
+    const resultados = await consultarClase(termino, signal, locale);
     return crearRespuesta(resultados);
   }
 
   if (modo === 'dbpedia') {
     try {
-      const resultados = await consultarDbpedia(termino, signal);
+      const resultados = await consultarDbpedia(termino, signal, locale);
       return crearRespuesta(resultados);
     } catch (error) {
       if (esCancelacion(error) && signal?.aborted) {
@@ -240,7 +276,7 @@ export async function buscar(
 
       return crearRespuesta(
         [],
-        'DBpedia no respondió dentro del tiempo esperado.'
+        obtenerWarning(locale, 'timeout')
       );
     }
   }
@@ -249,7 +285,7 @@ export async function buscar(
   let aviso: string | undefined;
 
   try {
-    const resultadosTexto = await consultarTexto(termino, signal);
+    const resultadosTexto = await consultarTexto(termino, signal, locale);
     acumulados.push(...resultadosTexto);
     onUpdate?.(crearRespuesta(acumulados));
   } catch (error) {
@@ -259,7 +295,7 @@ export async function buscar(
   }
 
   try {
-    const resultadosClase = await consultarClase(termino, signal);
+    const resultadosClase = await consultarClase(termino, signal, locale);
     acumulados.push(...resultadosClase);
 
     // Aqui ya se muestran los 29 individuos de Instrumento,
@@ -272,7 +308,7 @@ export async function buscar(
   }
 
   try {
-    const resultadosDbpedia = await consultarDbpedia(termino, signal);
+    const resultadosDbpedia = await consultarDbpedia(termino, signal, locale);
     acumulados.push(...resultadosDbpedia);
     onUpdate?.(crearRespuesta(acumulados));
   } catch (error) {
@@ -280,7 +316,7 @@ export async function buscar(
       throw new DOMException('Busqueda cancelada', 'AbortError');
     }
 
-    aviso = 'DBpedia no respondió. Se muestran los resultados locales encontrados.';
+    aviso = obtenerWarning(locale, 'partial');
   }
 
   return crearRespuesta(acumulados, aviso);
