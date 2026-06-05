@@ -13,17 +13,23 @@ _serialized_cache = {}
 PREFIXES_TO_REMOVE = ["Inst_", "Art_", "Gen_", "Alb_", "Can_", "Obra_", "Aut_"]
 
 SYNONYMS = {
-    "violin": ["violin", "violin", "violín"],
-    "piano": ["piano"],
-    "guitarra": ["guitarra"],
-    "flauta": ["flauta"],
-    "oboe": ["oboe"],
-    "trompeta": ["trompeta"],
-    "percusion": ["percusion", "percusión"],
-    "cuerda": ["cuerda"],
-    "viento": ["viento"],
-    "romantico": ["romantico", "romántico"],
-    "barroco": ["barroco"],
+"violin": ["violin", "violin", "violín", "fiddle", "violins"],
+    "piano": ["piano", "pianos", "pianoforte"],
+    "guitarra": ["guitarra", "guitar", "guitars"],
+    "flauta": ["flauta", "flute", "flutes"],
+    "oboe": ["oboe", "oboes"],
+    "trompeta": ["trompeta", "trumpet", "trumpets"],
+    "percusion": ["percusion", "percusión", "percussion", "drums"],
+    "cuerda": ["cuerda", "cuerdas", "string", "strings"],
+    "viento": ["viento", "vientos", "wind", "winds", "brass"],
+    "viento madera": ["viento madera", "woodwind", "woodwinds"],
+    "romantico": ["romantico", "romántico", "romantic", "romanticism"],
+    "barroco": ["barroco", "baroque"],
+    "clasico": ["clasico", "clásico", "classical", "classic"],
+    "composicion": ["composicion", "composición", "composition", "piece", "work", "track", "music"],
+    "alta": ["alta", "alto", "high", "hard", "complex", "difficult", "avanzado", "advanced"],
+    "media": ["media", "medio", "medium", "intermediate", "normal"],
+    "baja": ["baja", "bajo", "low", "easy", "simple", "facil", "fácil"]
 }
 
 def expandir_tokens(tokens):
@@ -308,40 +314,51 @@ def q_obras_por_autor(param):
             if p in normalize_text(serialize_element(ind)["autor"])]
 
 SEMANTIC_QUERY_MAP = {
-    "instrumentos de cuerda": {
-        "query": "instrumentos_cuerda",
-    },
-    "instrumentos de viento": {
-        "query": "instrumentos_viento",
-    },
-    "instrumentos de percusion": {
-        "query": "instrumentos_percusion",
-    },
-    "instrumentos de percusión": {
-        "query": "instrumentos_percusion",
-    },
-    "obras romanticas": {
-        "query": "obras_romanticas",
-    },
-    "obras románticas": {
-        "query": "obras_romanticas",
-    },
-    "obras de mozart": {
-        "query": "obras_por_autor",
-        "param": "mozart",
-    },
-    "obras de chopin": {
-        "query": "obras_por_autor",
-        "param": "chopin",
-    },
-    "obras de bach": {
-        "query": "obras_por_autor",
-        "param": "bach",
-    },
-    "obras de beethoven": {
-        "query": "obras_por_autor",
-        "param": "beethoven",
-    },
+# Cuerda
+    "instrumentos de cuerda": {"query": "instrumentos_cuerda"},
+    "instrumentos de cuerdas": {"query": "instrumentos_cuerda"},
+    "string instruments": {"query": "instrumentos_cuerda"},
+    "strings": {"query": "instrumentos_cuerda"},
+    
+    # Viento
+    "instrumentos de viento": {"query": "instrumentos_viento"},
+    "wind instruments": {"query": "instrumentos_viento"},
+    "brass instruments": {"query": "instrumentos_viento"},
+    
+    # Viento Madera
+    "instrumentos de viento madera": {"query": "instrumentos_viento_madera"},
+    "woodwind instruments": {"query": "instrumentos_viento_madera"},
+    "woodwinds": {"query": "instrumentos_viento_madera"},
+    
+    # Percusión
+    "instrumentos de percusion": {"query": "instrumentos_percusion"},
+    "instrumentos de percusión": {"query": "instrumentos_percusion"},
+    "percussion instruments": {"query": "instrumentos_percusion"},
+    "percussion": {"query": "instrumentos_percusion"},
+    
+    # Periodo Romántico
+    "obras romanticas": {"query": "obras_romanticas"},
+    "obras románticas": {"query": "obras_romanticas"},
+    "romantic works": {"query": "obras_romanticas"},
+    "romantic pieces": {"query": "obras_romanticas"},
+    "romantic songs": {"query": "obras_romanticas"},
+    
+    # Autores por parámetro (Mapeos bilingües de disparo)
+    "obras de mozart": {"query": "obras_por_autor", "param": "mozart"},
+    "works of mozart": {"query": "obras_por_autor", "param": "mozart"},
+    "pieces of mozart": {"query": "obras_por_autor", "param": "mozart"},
+    
+    "obras de chopin": {"query": "obras_por_autor", "param": "chopin"},
+    "works of chopin": {"query": "obras_por_autor", "param": "chopin"},
+    "pieces of chopin": {"query": "obras_por_autor", "param": "chopin"},
+    
+    "obras de bach": {"query": "obras_por_autor", "param": "bach"},
+    "works of bach": {"query": "obras_por_autor", "param": "bach"},
+    "pieces of bach": {"query": "obras_por_autor", "param": "bach"},
+    
+    "obras de beethoven": {"query": "obras_por_autor", "param": "beethoven"},
+    "works of beethoven": {"query": "obras_por_autor", "param": "beethoven"},
+    "pieces of beethoven": {"query": "obras_por_autor", "param": "beethoven"}
 }
 
 def detectar_consulta_semantica(texto):
