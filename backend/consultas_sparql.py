@@ -11,18 +11,25 @@ DBPEDIA_LOOKUP_ENDPOINT = "https://lookup.dbpedia.org/api/search"
 DBPEDIA_SPARQL_ENDPOINT = "https://dbpedia.org/sparql"
 
 # Diccionario de mapeo directo para música clásica.
-# Esto garantiza que cuando busquen autores clave, el enlace a DBpedia sea instantáneo e infalible.
+# Esto garantiza que cuando busquen autores clave, el enlace a DBpedia sea instantáneo.
 PHRASE_RESOURCE_MAP = {
 
     "mozart": ["Wolfgang_Amadeus_Mozart"],
     "beethoven": ["Ludwig_van_Beethoven"],
     "bach": ["Johann_Sebastian_Bach"],
     "chopin": ["Frédéric_Chopin"],
-
     "vivaldi": ["Antonio_Vivaldi"],
     "liszt": ["Franz_Liszt"],
     "debussy": ["Claude_Debussy"],
     "rachmaninoff": ["Sergei_Rachmaninoff"],
+    "tchaikovsky": ["Pyotr_Ilyich_Tchaikovsky"],
+    "strauss": ["Johann_Strauss_II"],
+    "handel": ["George_Frideric_Handel"],
+    "schubert": ["Franz_Schubert"],
+    "liszt": ["Franz_Liszt"],
+    "piazzolla": ["Astor_Piazzolla"],
+    "jarre": ["Jean_Michel_Jarre"],
+    "paganini": ["Niccolò_Paganini"],
 
     "piano": ["Piano"],
     "violin": ["Violin"],
@@ -31,7 +38,18 @@ PHRASE_RESOURCE_MAP = {
     "oboe": ["Oboe"],
     "flauta": ["Flute"],
     "clarinete": ["Clarinet"],
-    "trompeta": ["Trumpet"]
+    "trompeta": ["Trumpet"],
+    "trombon": ["Trombone"],
+    "tuba": ["Tuba"],
+    "arpa": ["Harp"],
+    "clavicordio": ["Clavichord"],
+    "cimbalum": ["Cimbalom"],
+    "sinfonia": ["Symphony"],
+    "sonata": ["Sonata"],
+    "composicion": ["Composition"],
+    "composición": ["Composition"],
+    "fantasia": ["Fantaisie"],
+    "composiciones": ["Compositions"],
 }
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}
@@ -177,7 +195,29 @@ def consultar_dbpedia_artistas(nombre_artista):
     """
     termino_limpio = nombre_artista.strip().lower()
     print(f"\n[DBpedia] Buscando información externa para: '{nombre_artista}'...")
+    # =========================================================================
+    # INTERCEPTOR TRILINGÜE DE LISTADOS LARGOS (EVITA TIMEOUTS EN LOOKUP)
+    # =========================================================================
+    indicadores_listado = [
+        "list of compositions by", "list of works by", "pieces of",
+        "lista de obras de", "composiciones de", "obras de",
+        "liste des compositions de", "oeuvres de", "œuvres de"
+    ]
+    
+    for indicador in indicadores_listado:
+        if indicador in termino_limpio:
+            posible_autor = termino_limpio.split(indicador)[-1].strip()
+            print(f"[DBpedia Redirección Trilingüe] Detectado listado complejo. Buscando directamente al autor: '{posible_autor}'")
+            return consultar_dbpedia_artistas(posible_autor)
 
+    # Contingencia secundaria por palabras clave sueltas de listados estructurales
+    autores_sistema = ["vivaldi", "piazzolla", "liszt", "chopin", "jarre", "bach", "beethoven", "paganini", "tchaikovsky", "rachmaninoff", "mozart", "debussy", "strauss", "handel", "schubert"]
+    if any(ind in termino_limpio for ind in ["list", "compositions", "liste", "oeuvres", "obras"]):
+        for autor in autores_sistema:
+            if autor in termino_limpio:
+                print(f"[DBpedia Contingencia] Extrayendo palabra raíz del autor: '{autor}'")
+                return consultar_dbpedia_artistas(autor)
+    # =========================================================================
     # Estrategia 1: Mapeo directo por diccionario (Instantáneo)
     if termino_limpio in PHRASE_RESOURCE_MAP:
         print(f"[DBpedia] Coincidencia directa encontrada en el mapa musical para '{termino_limpio}'.")
@@ -197,7 +237,7 @@ def consultar_dbpedia_artistas(nombre_artista):
 
         # Evita bloquear la respuesta si la ontologia no esta cargada.
         if motor_semantico._onto_instancia is not None:
-            poblar_ontologia_con_dbpedia(resultados, "Artista")
+            poblar_ontologia_con_dbpedia(resultados, "Compositor")
 
         return resultados
 
@@ -212,7 +252,7 @@ def consultar_dbpedia_artistas(nombre_artista):
     )
 
     try:
-        with urlopen(request, timeout=6) as response:
+        with urlopen(request, timeout=12) as response:
             data = json.loads(response.read().decode("utf-8"))
         
         docs = data.get("docs", [])
@@ -247,7 +287,7 @@ def consultar_dbpedia_artistas(nombre_artista):
         if resultados_limpios:
             # Poblamos sobre nuestra ontologia activa si ya esta en memoria
             if motor_semantico._onto_instancia is not None:
-                poblar_ontologia_con_dbpedia(resultados_limpios, "Artista")
+                poblar_ontologia_con_dbpedia(resultados_limpios, "Compositor")
             return resultados_limpios
 
         return []
