@@ -296,7 +296,7 @@ def consultar_dbpedia_artistas(nombre_artista):
         print(f"[DBpedia] Falló la conexión con el servicio Lookup: {e}")
         return []
 
-def poblar_ontologia_con_dbpedia(datos_remotos, nombre_clase_local="Artista"):
+def poblar_ontologia_con_dbpedia(datos_remotos, nombre_clase_local="Compositor"):
     """
     Inserta los datos recuperados de DBpedia directo en la memoria RAM 
     de la ontología actual, manteniendo el backend compacto y veloz.
