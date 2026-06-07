@@ -4,7 +4,8 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 from owlready2 import default_world, Thing
 import types
-import motor_semantico  # Acceso directo a nuestra ontología en memoria RAM
+import motor_semantico
+import unicodedata  # Acceso directo a nuestra ontología en memoria RAM
 
 # Configuración de Endpoints usando lookup
 DBPEDIA_LOOKUP_ENDPOINT = "https://lookup.dbpedia.org/api/search"
@@ -13,43 +14,269 @@ DBPEDIA_SPARQL_ENDPOINT = "https://dbpedia.org/sparql"
 # Diccionario de mapeo directo para música clásica.
 # Esto garantiza que cuando busquen autores clave, el enlace a DBpedia sea instantáneo.
 PHRASE_RESOURCE_MAP = {
-
-    "mozart": ["Wolfgang_Amadeus_Mozart"],
-    "beethoven": ["Ludwig_van_Beethoven"],
-    "bach": ["Johann_Sebastian_Bach"],
-    "chopin": ["Frédéric_Chopin"],
-    "vivaldi": ["Antonio_Vivaldi"],
-    "liszt": ["Franz_Liszt"],
-    "debussy": ["Claude_Debussy"],
-    "rachmaninoff": ["Sergei_Rachmaninoff"],
-    "tchaikovsky": ["Pyotr_Ilyich_Tchaikovsky"],
-    "strauss": ["Johann_Strauss_II"],
-    "handel": ["George_Frideric_Handel"],
-    "schubert": ["Franz_Schubert"],
-    "liszt": ["Franz_Liszt"],
+    # ==========================================
+    # AUTORES CLAVE (INTERCEPCIÓN DIRECTA)
+    # ==========================================
+    "mozart": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+    "beethoven": ["Ludwig_van_Beethoven", "List_of_compositions_by_Ludwig_van_Beethoven"],
+    "bach": ["Johann_Sebastian_Bach", "List_of_compositions_by_Johann_Sebastian_Bach"],
+    "chopin": ["Frédéric_Chopin", "List_of_compositions_by_Frédéric_Chopin_by_genre"],
+    "schubert": ["Franz_Schubert", "List_of_compositions_by_Franz_Schubert"],
+    "liszt": ["Franz_Liszt", "List_of_compositions_by_Franz_Liszt"],
+    "vivaldi": ["Antonio_Vivaldi", "List_of_compositions_by_Antonio_Vivaldi"],
+    "rachmaninoff": ["Sergei_Rachmaninoff", "List_of_compositions_by_Sergei_Rachmaninoff"],
+    "tchaikovsky": ["Pyotr_Ilyich_Tchaikovsky", "List_of_compositions_by_Pyotr_Ilyich_Tchaikovsky"],
+    "paganini": ["Niccolò_Paganini", "List_of_compositions_by_Niccolò_Paganini"],
+    "strauss": ["Johann_Strauss_II", "List_of_compositions_by_Johann_Strauss_II"],
+    "handel": ["George_Frideric_Handel", "List_of_compositions_by_George_Frideric_Handel"],
     "piazzolla": ["Astor_Piazzolla"],
     "jarre": ["Jean_Michel_Jarre"],
-    "paganini": ["Niccolò_Paganini"],
+    "debussy": ["Claude_Debussy"],
 
-    "piano": ["Piano"],
-    "violin": ["Violin"],
-    "violín": ["Violin"],
-    "guitarra": ["Guitar"],
-    "oboe": ["Oboe"],
-    "flauta": ["Flute"],
-    "clarinete": ["Clarinet"],
-    "trompeta": ["Trumpet"],
-    "trombon": ["Trombone"],
-    "tuba": ["Tuba"],
-    "arpa": ["Harp"],
-    "clavicordio": ["Clavichord"],
-    "cimbalum": ["Cimbalom"],
-    "sinfonia": ["Symphony"],
-    "sonata": ["Sonata"],
-    "composicion": ["Composition"],
-    "composición": ["Composition"],
-    "fantasia": ["Fantaisie"],
-    "composiciones": ["Compositions"],
+    # ==========================================
+    # INSTRUMENTOS TRILINGÜES (ES / EN / FR)
+    # ==========================================
+    # Piano
+    "piano": ["Piano"], "pianos": ["Piano"], "pianoforte": ["Piano"],
+    
+    # Violín
+    "violin": ["Violin"], "violines": ["Violin"], "violín": ["Violin"], 
+    "fiddle": ["Violin"], "violins": ["Violin"], "violon": ["Violin"], "violons": ["Violin"],
+    
+    # Guitarra
+    "guitarra": ["Guitar"], "guitarras": ["Guitar"], "guitar": ["Guitar"], 
+    "guitars": ["Guitar"], "guitare": ["Guitar"], "guitares": ["Guitar"],
+    
+    # Flauta
+    "flauta": ["Flute"], "flautas": ["Flute"], "flute": ["Flute"], 
+    "flutes": ["Flute"], "flûte": ["Flute"], "flûtes": ["Flute"],
+    
+    # Oboe
+    "oboe": ["Oboe"], "oboes": ["Oboe"], "hautbois": ["Oboe"],
+    
+    # Trompeta
+    "trompeta": ["Trumpet"], "trompetas": ["Trumpet"], "trumpet": ["Trumpet"], 
+    "trumpets": ["Trumpet"], "trompette": ["Trumpet"], "trompettes": ["Trumpet"],
+    
+    # Clarinete
+    "clarinete": ["Clarinet"], "clarinetes": ["Clarinet"], "clarinet": ["Clarinet"], 
+    "clarinets": ["Clarinet"], "clarinette": ["Clarinet"], "clarinettes": ["Clarinet"],
+    
+    # Teclado
+    "teclado": ["Keyboard"], "teclados": ["Keyboard"], 
+    "keyboard": ["Keyboard"], "keyboards": ["Keyboard"], 
+    "clavier": ["Keyboard"], "claviers": ["Keyboard"],
+    
+    # Arpa
+    "arpa": ["Harp"], "arpas": ["Harp"], "harp": ["Harp"], 
+    "harps": ["Harp"], "harpe": ["Harp"], "harpes": ["Harp"],
+    
+    # Cimbalum
+    "cimbalum": ["Cimbalom"], "cimbales": ["Cimbalom"], "cimbalom": ["Cimbalom"], 
+    "cimbals": ["Cimbalom"], "cymbalum": ["Cimbalom"], "cymbales": ["Cimbalom"], 
+    "cymbal": ["Cimbalom"], "cymbals": ["Cimbalom"],
+    
+    # Clavicordio
+    "clavicordio": ["Clavichord"], "clavicordios": ["Clavichord"], "clavichord": ["Clavichord"], 
+    "clavichords": ["Clavichord"], "clavicorde": ["Clavichord"], "clavicordes": ["Clavichord"],
+    
+    # Contrabajo
+    "contrabajo": ["Double_bass"], "contrabajos": ["Double_bass"], "double bass": ["Double_bass"], 
+    "double basses": ["Double_bass"], "contrebasse": ["Double_bass"], "contrebasses": ["Double_bass"],
+    
+    # Mandolina
+    "mandolina": ["Mandolin"], "mandolinas": ["Mandolin"], "mandolin": ["Mandolin"], 
+    "mandolins": ["Mandolin"], "mandoline": ["Mandolin"], "mandolines": ["Mandolin"],
+    
+    # Corno
+    "corno": ["French_horn"], "corni": ["French_horn"], "horn": ["French_horn"], 
+    "horns": ["French_horn"], "cor": ["French_horn"], "cors": ["French_horn"],
+    
+    # Saxofón
+    "saxofon": ["Saxophone"], "saxofones": ["Saxophone"], "saxophone": ["Saxophone"], "saxophones": ["Saxophone"],
+    
+    # Trombón
+    "trombon": ["Trombone"], "trombones": ["Trombone"], "trombone": ["Trombone"],
+    
+    # Tuba
+    "tuba": ["Tuba"], "tubas": ["Tuba"],
+    
+    # Aerófono
+    "aerofono": ["Aerophone"], "aerofonos": ["Aerophone"], "aerophone": ["Aerophone"], 
+    "aerophones": ["Aerophone"], "aérophone": ["Aerophone"], "aérophones": ["Aerophone"],
+
+    # ==========================================
+    # FAMILIAS Y CATEGORÍAS (ES / EN / FR)
+    # ==========================================
+    # Percusión
+    "percusion": ["Percussion_instrument"], "percusión": ["Percussion_instrument"], 
+    "percussion": ["Percussion_instrument"], "percussions": ["Percussion_instrument"], "drums": ["Percussion_instrument"],
+    
+    # Cuerda
+    "cuerda": ["String_instrument"], "cuerdas": ["String_instrument"], 
+    "string": ["String_instrument"], "strings": ["String_instrument"], "corde": ["String_instrument"], "cordes": ["String_instrument"],
+    
+    # Viento
+    "viento": ["Wind_instrument"], "vientos": ["Wind_instrument"], "wind": ["Wind_instrument"], 
+    "winds": ["Wind_instrument"], "brass": ["Brass_instrument"], "vent": ["Wind_instrument"], "vents": ["Wind_instrument"],
+    
+    # Viento Madera
+    "viento madera": ["Woodwind instrument"], "woodwind": ["Woodwind instrument"], 
+    "woodwinds": ["Woodwind_instrument"], "bois": ["Woodwind_instrument"],
+    
+    # Madera y Metal
+    "madera": ["Wood"], "wood": ["Wood"],
+    "metal": ["Metal"], "metales": ["Metal"], "brass": ["Brass_instrument"], "métal": ["Metal"], "métaux": ["Metal"],
+
+    # ==========================================
+    # PERIODOS HISTÓRICOS (ES / EN / FR)
+    # ==========================================
+    "romantico": ["Romantic_music"], "romántico": ["Romantic_music"], "romantic": ["Romantic_music"], 
+    "romanticism": ["Romanticism"], "romantique": ["Romantic_music"], "romantisme": ["Romanticism"],
+    
+    "barroco": ["Baroque_music"], "baroque": ["Baroque_music"],
+    
+    "clasico": ["Classical_period_(music)"], "clásico": ["Classical_period_(music)"], 
+    "classical": ["Classical_period_(music)"], "classic": ["Classical_period_(music)"], "classique": ["Classical_period_(music)"],
+
+    # =========================================================================
+    # MULTI-RESULTADOS: LISTADOS MÚLTIPLES DIRECTOS
+    # =========================================================================
+    "composicion": ["Catalogues_of_classical_compositions"], 
+    "composición": ["Catalogues_of_classical_compositions"], 
+    "composition": ["Catalogues_of_classical_compositions"],
+    "piece": ["Musical_composition"], "work": ["Musical_composition"], "track": ["Musical_composition"], "piste": ["Musical_composition"], "pièce": ["Musical_composition"],
+    "music": ["Music"], "oeuvre": ["Musical_composition"], "œuvre": ["Musical_composition"], "morceau": ["Musical_composition"],
+    "song": ["Song"], "cancion": ["Song"], "canción": ["Song"],"chanson": ["Song"], "chansons": ["Song"], "chanson": ["Song"],
+    
+    # Composiciones / Obras
+    "composiciones": [
+        "Catalogues_of_classical_compositions",
+        "List_of_compositions_by_Johann_Sebastian_Bach",
+        "List_of_compositions_by_Franz_Schubert",
+        "List_of_compositions_by_Frédéric_Chopin_by_genre",
+        "List_of_compositions_by_Ludwig_van_Beethoven",
+        "List_of_compositions_by_Wolfgang_Amadeus_Mozart"
+    ],
+    "compositions": [
+        "Catalogues_of_classical_compositions",
+        "List_of_compositions_by_Johann_Sebastian_Bach",
+        "List_of_compositions_by_Franz_Schubert",
+        "List_of_compositions_by_Ludwig_van_Beethoven"
+    ],
+    "pieces": [
+        "Catalogues_of_classical_compositions",
+        "List_of_compositions_by_Johann_Sebastian_Bach",
+        "List_of_compositions_by_Franz_Schubert",
+        "List_of_compositions_by_Ludwig_van_Beethoven"
+    ],
+    "works": ["Compositions"], "tracks": ["Compositions"], "oeuvres": ["Compositions"], "œuvres": ["Compositions"], "morceaux": ["Compositions"],
+    
+    # Fantasía
+    "fantasia": ["Fantaisie"], "fantasía": ["Fantaisie"], "fantasy": ["Fantaisie"], "fantaisie": ["Fantaisie"],
+    
+    # Artista / Compositor
+    "artista": ["Composer"], "musico": ["Composer"], "músico": ["Composer"], "autor": ["Composer"], 
+    "creador": ["Composer"], "artist": ["Composer"], "composer": ["Composer"], "author": ["Composer"], 
+    "compositeur": ["Composer"], "auteur": ["Composer"],
+    
+    # Sinfonía
+    "sinfonia": ["Symphony"], "sinfonía": ["Symphony"], "symphony": ["Symphony"], 
+    "symphonies": ["Symphony"], "symphonie": ["Symphony"],
+    
+    # Sonata
+    "sonata": ["Sonata"], "sonatas": ["Sonata"], "sonate": ["Sonata"],
+
+    # ==========================================
+    # NIVELES DE DIFICULTAD (CONCEPTUAL RECURSO)
+    # ==========================================
+    "alta": ["Complexity"], "alto": ["Complexity"], "high": ["Complexity"], "hard": ["Complexity"], 
+    "complex": ["Complexity"], "difficult": ["Complexity"], "avanzado": ["Complexity"], 
+    "advanced": ["Complexity"], "haute": ["Complexity"], "complexe": ["Complexity"], "difficile": ["Complexity"],
+    
+    "media": ["Average"], "medio": ["Average"], "medium": ["Average"], "intermediate": ["Average"], 
+    "normal": ["Average"], "moyenne": ["Average"], "intermédiaire": ["Average"],
+    
+    "baja": ["Simplicity"], "bajo": ["Simplicity"], "low": ["Simplicity"], "easy": ["Simplicity"], 
+    "simple": ["Simplicity"], "facil": ["Simplicity"], "fácil": ["Simplicity"], "basse": ["Simplicity"], "facile": ["Simplicity"],
+
+    # =========================================================================
+    # 1. FORMAS Y GÉNEROS MUSICALES ESTRUCTURALES (ES / EN / FR)
+    # =========================================================================
+    # Concierto
+    "concierto": ["Concerto"], "conciertos": ["Concerto"], 
+    "concerto": ["Concerto"], "concertos": ["Concerto"], 
+    "concert": ["Concerto"], "concerts": ["Concerto"],
+    
+    # Ópera
+    "opera": ["Opera"], "ópera": ["Opera"], "operas": ["Opera"], 
+    "operes": ["Opera"],
+    
+    # Preludio
+    "preludio": ["Prelude"], "preludios": ["Prelude"], 
+    "prelude": ["Prelude"], "preludes": ["Prelude"], 
+    "prélude": ["Prelude"], "préludes": ["Prelude"],
+    
+    # Fuga
+    "fuga": ["Fugue"], "fugas": ["Fugue"], 
+    "fugue": ["Fugue"], "fugues": ["Fugue"],
+    
+    # Nocturno
+    "nocturno": ["Nocturne"], "nocturnos": ["Nocturne"], 
+    "nocturne": ["Nocturne"], "nocturnes": ["Nocturne"],
+
+    # =========================================================================
+    # 2. ROLES DEL DOMINIO E INTÉRPRETES (ES / EN / FR)
+    # =========================================================================
+    # Director / Orquesta
+    "director": ["Music_director"], "directores": ["Music_director"], 
+    "conductor": ["Music_director"], "conductors": ["Music_director"], 
+    "chef d orchestre": ["Music_director"], "orquesta": ["Orchestra"], 
+    "orchestra": ["Orchestra"], "orchestre": ["Orchestra"],
+    
+    # Pianista
+    "pianista": ["Pianist"], "pianistas": ["Pianist"], 
+    "pianist": ["Pianist"], "pianists": ["Pianist"], 
+    "pianiste": ["Pianist"], "pianistes": ["Pianist"],
+    
+    # Violinista
+    "violinista": ["Violinist"], "violinistas": ["Violinist"], 
+    "violinist": ["Violinist"], "violinists": ["Violinist"], 
+    "violoniste": ["Violinist"], "violonistes": ["Violinist"],
+    
+    # Violonchelista
+    "violonchelista": ["Cellist"], "violonchelistas": ["Cellist"], 
+    "cellist": ["Cellist"], "cellists": ["Cellist"], 
+    "celliste": ["Cellist"], "cellistes": ["Cellist"],
+
+    # =========================================================================
+    # 3. VOCABULARIO TÉCNICO Y TEORÍA DE PARTITURAS (ES / EN / FR)
+    # =========================================================================
+    # Partitura / Registro
+    "partitura": ["Sheet_music"], "partituras": ["Sheet_music"], 
+    "score": ["Sheet_music"], "scores": ["Sheet_music"], "sheet music": ["Sheet_music"], 
+    "partition": ["Sheet_music"], "partitions": ["Sheet_music"],
+    
+    # Ritmo
+    "ritmo": ["Rhythm"], "ritmos": ["Rhythm"], 
+    "rhythm": ["Rhythm"], "rhythms": ["Rhythm"], 
+    "rythme": ["Rhythm"], "rythmes": ["Rhythm"],
+    
+    # Melodía
+    "melodia": ["Melody"], "melodía": ["Melody"], "melodias": ["Melody"], 
+    "melody": ["Melody"], "melodies": ["Melody"], 
+    "melodie": ["Melody"], "mélodie": ["Melody"], "mélodies": ["Melody"],
+    
+    # Armonía
+    "armonia": ["Harmony"], "armonía": ["Harmony"], 
+    "harmony": ["Harmony"], "harmonies": ["Harmony"], 
+    "harmonie": ["Harmony"], "harmonies": ["Harmony"],
+    
+    # Tempo / Escala
+    "tempo": ["Tempo"], "tempos": ["Tempo"], "mouvement": ["Tempo"], 
+    "escala": ["Scale_(music)"], "escalas": ["Scale_(music)"], 
+    "scale": ["Scale_(music)"], "scales": ["Scale_(music)"], 
+    "gamme": ["Scale_(music)"], "gammes": ["Scale_(music)"],
 }
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}
@@ -190,11 +417,24 @@ def consultar_por_sparql_local(texto_busqueda):
 
 def consultar_dbpedia_artistas(nombre_artista):
     """
-    Consulta remota utilizando la estrategia híbrida ganadora del otro grupo:
-    Usa el diccionario directo o ataca la API de DBpedia Lookup de forma infalible.
+    Consulta remota utilizando la estrategia híbrida optimizada trilingüe.
     """
-    termino_limpio = nombre_artista.strip().lower()
-    print(f"\n[DBpedia] Buscando información externa para: '{nombre_artista}'...")
+    if not nombre_artista:
+        return []
+
+    # =========================================================================
+    # NORMALIZACIÓN ULTRA ESTRICTA (IGUAL QUE EN EL MOTOR SEMÁNTICO)
+    # =========================================================================
+    # 1. Pasar a minúsculas y limpiar espacios de los extremos
+    texto = str(nombre_artista).lower().strip()
+    # 2. Descomponer caracteres para remover acentos/diacríticos
+    texto = unicodedata.normalize("NFD", texto)
+    texto = "".join(char for char in texto if unicodedata.category(char) != "Mn")
+    # 3. Remover guiones o guiones bajos y colapsar espacios internos duplicados
+    termino_limpio = " ".join(texto.replace("_", " ").replace("-", " ").split())
+
+    print(f"\n[DBpedia] Buscando información externa para: '{nombre_artista}' (Limpio: '{termino_limpio}')...")
+
     # =========================================================================
     # INTERCEPTOR TRILINGÜE DE LISTADOS LARGOS (EVITA TIMEOUTS EN LOOKUP)
     # =========================================================================
@@ -217,25 +457,36 @@ def consultar_dbpedia_artistas(nombre_artista):
             if autor in termino_limpio:
                 print(f"[DBpedia Contingencia] Extrayendo palabra raíz del autor: '{autor}'")
                 return consultar_dbpedia_artistas(autor)
+
     # =========================================================================
-    # Estrategia 1: Mapeo directo por diccionario (Instantáneo)
+    # Estrategia 1: Mapeo directo por diccionario (REPLAZADO Y BLINDADO)
+    # =========================================================================
     if termino_limpio in PHRASE_RESOURCE_MAP:
         print(f"[DBpedia] Coincidencia directa encontrada en el mapa musical para '{termino_limpio}'.")
         recursos = PHRASE_RESOURCE_MAP[termino_limpio]
         resultados = []
+        
         for res in recursos:
-            # Construimos un objeto limpio simulando la respuesta
             uri = f"http://dbpedia.org/resource/{res}"
-            detalles = consultar_dbpedia_detalles(uri)
+            
+            # BLINDAJE ULTRA-RÁPIDO: Evita llamar a internet si es una página estructural de listado
+            if "List_of" in res or "Catalogues" in res:
+                detalles = {
+                    "abstract": f"Índice y catálogo estructural de las obras y partituras históricas de {res.replace('List_of_compositions_by_', '').replace('_', ' ')}.",
+                    "birthDate": None, "deathDate": None, "genres": [], "instruments": [],
+                    "birthPlaces": [], "nationalities": [], "notableWorks": [], "thumbnail": None, "wikipediaPage": None
+                }
+            else:
+                # Solo hace la llamada SPARQL real para la biografía principal del autor
+                detalles = consultar_dbpedia_detalles(uri)
 
             resultados.append({
-                "uri_dbpedia": f"http://dbpedia.org/resource/{res}",
+                "uri_dbpedia": uri,
                 "nombre": res.replace("_", " "),
-                "descripcion": f"Recurso histórico musical de alta relevancia en DBpedia sobre {res.replace('_', ' ')}.",
+                "descripcion": f"Recurso histórico musical de alta relevancia en DBpedia.",
                 **detalles,
             })
 
-        # Evita bloquear la respuesta si la ontologia no esta cargada.
         if motor_semantico._onto_instancia is not None:
             poblar_ontologia_con_dbpedia(resultados, "Compositor")
 
