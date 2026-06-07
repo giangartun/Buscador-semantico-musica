@@ -15,49 +15,6 @@ from consultas_sparql import consultar_por_sparql_local, consultar_dbpedia_artis
 app = Flask(__name__)
 CORS(app)
 
-SUPPORTED_LANGS = {"es", "en", "fr"}
-
-MESSAGES = {
-    "query_not_found": {
-        "es": "La consulta tecnica '{query}' no existe en la configuracion.",
-        "en": "The technical query '{query}' does not exist in the configuration.",
-        "fr": "La requete technique '{query}' n'existe pas dans la configuration.",
-    },
-    "missing_param": {
-        "es": "Falta el parametro 'param' para esta consulta.",
-        "en": "Missing 'param' parameter for this query.",
-        "fr": "Le parametre 'param' est requis pour cette requete.",
-    },
-    "missing_name": {
-        "es": "Falta el parametro nombre",
-        "en": "Missing 'nombre' parameter",
-        "fr": "Parametre 'nombre' manquant",
-    },
-    "missing_text": {
-        "es": "Falta el parametro texto",
-        "en": "Missing 'texto' parameter",
-        "fr": "Parametre 'texto' manquant",
-    },
-    "missing_search": {
-        "es": "Debes proporcionar el parametro 'texto' o 'clase' en la URL.",
-        "en": "You must provide the 'texto' or 'clase' parameter in the URL.",
-        "fr": "Vous devez fournir le parametre 'texto' ou 'clase' dans l'URL.",
-    },
-    "health": {
-        "es": "Backend musical funcionando",
-        "en": "Music backend is running",
-        "fr": "Backend musical en fonctionnement",
-    },
-}
-
-def get_lang():
-    lang = request.args.get("lang", "es").lower()
-    return lang if lang in SUPPORTED_LANGS else "es"
-
-def msg(key, lang, **kwargs):
-    template = MESSAGES.get(key, {}).get(lang, MESSAGES.get(key, {}).get("es", ""))
-    return template.format(**kwargs)
-
 print("\n--- [Servidor] Iniciando Servidor Backend Semántico Musical ---")
 # Carga inicial de la ontología y ejecución única del razonador
 cargar_y_razonar()
@@ -69,15 +26,14 @@ def api_semantic_queries(query_name):
     Permite filtrar por criterios específicos como periodo, dificultad o autor.
     """
     info = get_query_info(query_name)
-    lang = get_lang()
     if not info:
-        return jsonify({"error": msg("query_not_found", lang, query=query_name)}), 404
+        return jsonify({"error": f"La consulta técnica '{query_name}' no existe en la configuración."}), 404
 
     # Captura el parámetro opcional si la consulta lo requiere (ej. ?param=Mozart)
     param = request.args.get('param')
 
     if info.get("requires_param") and not param:
-        return jsonify({"error": msg("missing_param", lang)}), 400
+        return jsonify({"error": "Falta el parámetro 'param' para esta consulta."}), 400
 
     handler = info.get("handler")
     resultados = handler(param) if info.get("requires_param") else handler()
@@ -92,14 +48,13 @@ def api_semantic_queries(query_name):
 @app.route('/api/dbpedia', methods=['GET'])
 def api_dbpedia():
     artista = request.args.get('nombre')
-    lang = get_lang()
 
     if not artista:
         return jsonify({
-            "error": msg("missing_name", lang)
+            "error": "Falta el parámetro nombre"
         }), 400
 
-    resultados = consultar_dbpedia_artistas(artista, lang)
+    resultados = consultar_dbpedia_artistas(artista)
 
     return jsonify({
         "total": len(resultados),
@@ -109,11 +64,10 @@ def api_dbpedia():
 @app.route('/api/sparql', methods=['GET'])
 def api_sparql():
     texto = request.args.get('texto')
-    lang = get_lang()
 
     if not texto:
         return jsonify({
-            "error": msg("missing_text", lang)
+            "error": "Falta el parámetro texto"
         }), 400
 
     resultados = consultar_por_sparql_local(texto)
@@ -161,7 +115,7 @@ def api_buscar():
             
     else:
         return jsonify({
-            "error": msg("missing_search", lang)
+            "error": "Debes proporcionar el parámetro 'texto' o 'clase' en la URL."
         }), 400
 
     # 3. Filtro de intersección esencial: Si mandaron AMBOS parámetros (?texto=...&clase=...)
@@ -178,8 +132,7 @@ def api_buscar():
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    lang = get_lang()
-    return jsonify({"status": "ok", "message": msg("health", lang)}), 200
+    return jsonify({"status": "ok", "message": "Backend musical funcionando"}), 200
 
 if __name__ == "__main__":
     print("[Servidor] API lista y escuchando en http://localhost:5000")
