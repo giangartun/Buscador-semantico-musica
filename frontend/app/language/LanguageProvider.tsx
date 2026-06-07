@@ -69,19 +69,22 @@ export default function LanguageProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [locale, setLocaleState] = useState<Locale>('es');
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window === 'undefined') {
+      return 'es';
+    }
+
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored && LOCALES.includes(stored as Locale) ? (stored as Locale) : 'es';
+  });
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored && LOCALES.includes(stored as Locale)) {
-      setLocaleState(stored as Locale);
-    }
-  }, []);
+    window.localStorage.setItem(STORAGE_KEY, locale);
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale);
-    window.localStorage.setItem(STORAGE_KEY, nextLocale);
-    document.documentElement.lang = nextLocale;
   }, []);
 
   const t = useCallback(

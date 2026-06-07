@@ -88,11 +88,15 @@ def cargar_y_razonar():
         os.makedirs(carpeta_segura, exist_ok=True)
         
         print("Ejecutando razonador en entorno seguro...")
-        with onto:
-            sync_reasoner(infer_property_values=True) 
-            
+        try:
+            with onto:
+                sync_reasoner(infer_property_values=True)
+        except Exception as reasoner_error:
+            # Si HermiT falla, conservamos la ontología cargada para no romper la búsqueda.
+            print(f"[Motor] Razonador no disponible, usando ontología sin inferencias: {reasoner_error}")
+
         _onto_instancia = onto
-        print("[Motor] ¡Ontología Académica e Inferencias listas en memoria!")
+        print("[Motor] ¡Ontología cargada en memoria!")
         return _onto_instancia
         
     except Exception as e:

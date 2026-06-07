@@ -286,6 +286,13 @@ export default function HomePage() {
                     description={resultado.descripcion}
                     source={resultado.origen}
                     uri={resultado.uri}
+                    periodoHistorico={resultado.periodoHistorico}
+                    complejidadTecnica={resultado.complejidadTecnica}
+                    anioLanzamiento={resultado.anioLanzamiento}
+                    autor={resultado.autor}
+                    instrumentoRequerido={resultado.instrumentoRequerido}
+                    familiaInstrumento={resultado.familiaInstrumento}
+                    tags={resultado.tags}
                     abstract={resultado.abstract}
                     birthDate={resultado.birthDate}
                     deathDate={resultado.deathDate}

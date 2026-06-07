@@ -79,7 +79,7 @@ def consultar_dbpedia_detalles(uri, lang="es"):
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-    SELECT ?abstract ?birthDate ?deathDate ?genreLabel ?instrumentLabel ?birthPlaceLabel ?nationalityLabel ?notableWorkLabel ?thumbnail ?wiki
+    SELECT ?abstract ?birthDate ?deathDate ?genreLabel ?instrumentLabel ?birthPlaceLabel ?deathPlaceLabel ?occupationLabel ?nationalityLabel ?notableWorkLabel ?thumbnail ?wiki
     WHERE {{
         OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:abstract ?abstract . FILTER(lang(?abstract) = "{fallback_lang}") }}
@@ -88,6 +88,8 @@ def consultar_dbpedia_detalles(uri, lang="es"):
         OPTIONAL {{ <{uri}> dbo:genre ?genre . ?genre rdfs:label ?genreLabel . FILTER(lang(?genreLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:instrument ?instrument . ?instrument rdfs:label ?instrumentLabel . FILTER(lang(?instrumentLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:birthPlace ?birthPlace . ?birthPlace rdfs:label ?birthPlaceLabel . FILTER(lang(?birthPlaceLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:deathPlace ?deathPlace . ?deathPlace rdfs:label ?deathPlaceLabel . FILTER(lang(?deathPlaceLabel) = "{lang_code}") }}
+        OPTIONAL {{ <{uri}> dbo:occupation ?occupation . ?occupation rdfs:label ?occupationLabel . FILTER(lang(?occupationLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:nationality ?nationality . ?nationality rdfs:label ?nationalityLabel . FILTER(lang(?nationalityLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:notableWork ?notableWork . ?notableWork rdfs:label ?notableWorkLabel . FILTER(lang(?notableWorkLabel) = "{lang_code}") }}
         OPTIONAL {{ <{uri}> dbo:thumbnail ?thumbnail . }}
@@ -105,7 +107,7 @@ def consultar_dbpedia_detalles(uri, lang="es"):
     )
 
     try:
-        with urlopen(request, timeout=6) as response:
+        with urlopen(request, timeout=10) as response:
             data = json.loads(response.read().decode("utf-8"))
     except Exception:
         return {}
@@ -122,6 +124,8 @@ def consultar_dbpedia_detalles(uri, lang="es"):
     genres = set()
     instruments = set()
     birth_places = set()
+    death_places = set()
+    occupations = set()
     nationalities = set()
     notable_works = set()
 
@@ -149,6 +153,14 @@ def consultar_dbpedia_detalles(uri, lang="es"):
         if birth_place_label:
             birth_places.add(birth_place_label)
 
+        death_place_label = row.get("deathPlaceLabel", {}).get("value")
+        if death_place_label:
+            death_places.add(death_place_label)
+
+        occupation_label = row.get("occupationLabel", {}).get("value")
+        if occupation_label:
+            occupations.add(occupation_label)
+
         nationality_label = row.get("nationalityLabel", {}).get("value")
         if nationality_label:
             nationalities.add(nationality_label)
@@ -164,6 +176,8 @@ def consultar_dbpedia_detalles(uri, lang="es"):
         "genres": sorted(genres),
         "instruments": sorted(instruments),
         "birthPlaces": sorted(birth_places),
+        "deathPlaces": sorted(death_places),
+        "occupations": sorted(occupations),
         "nationalities": sorted(nationalities),
         "notableWorks": sorted(notable_works),
         "thumbnail": thumbnail,
@@ -264,7 +278,7 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
     )
 
     try:
-        with urlopen(request, timeout=12) as response:
+        with urlopen(request, timeout=15) as response:
             data = json.loads(response.read().decode("utf-8"))
         
         docs = data.get("docs", [])

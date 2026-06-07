@@ -1,5 +1,5 @@
 const API_BASE_URL = 'http://127.0.0.1:5000';
-const DBPEDIA_TIMEOUT_MS = 8000;
+const DBPEDIA_TIMEOUT_MS = 20000;
 
 const WARNING_MESSAGES: Record<string, { timeout: string; partial: string }> = {
   es: {
@@ -25,12 +25,21 @@ export interface SearchResult {
   descripcion?: string;
   uri?: string;
   origen: string;
+  periodoHistorico?: string;
+  complejidadTecnica?: string;
+  anioLanzamiento?: string;
+  autor?: string;
+  instrumentoRequerido?: string;
+  familiaInstrumento?: string;
+  tags?: string[];
   abstract?: string;
   birthDate?: string;
   deathDate?: string;
   genres?: string[];
   instruments?: string[];
   birthPlaces?: string[];
+  deathPlaces?: string[];
+  occupations?: string[];
   nationalities?: string[];
   notableWorks?: string[];
   thumbnail?: string;
@@ -49,6 +58,13 @@ interface BackendSearchResult {
   clases: string[];
   descripcion?: string;
   uri?: string;
+  periodoHistorico?: string;
+  complejidadTecnica?: string;
+  anioLanzamiento?: string;
+  autor?: string;
+  instrumentoRequerido?: string;
+  familiaInstrumento?: string;
+  tags?: string[];
 }
 
 interface BackendDbpediaResult {
@@ -61,6 +77,8 @@ interface BackendDbpediaResult {
   genres?: string[];
   instruments?: string[];
   birthPlaces?: string[];
+  deathPlaces?: string[];
+  occupations?: string[];
   nationalities?: string[];
   notableWorks?: string[];
   thumbnail?: string;
@@ -170,6 +188,13 @@ async function consultarTexto(
     descripcion: resultado.descripcion,
     uri: resultado.uri,
     origen: 'Texto local',
+    periodoHistorico: resultado.periodoHistorico,
+    complejidadTecnica: resultado.complejidadTecnica,
+    anioLanzamiento: resultado.anioLanzamiento,
+    autor: resultado.autor,
+    instrumentoRequerido: resultado.instrumentoRequerido,
+    familiaInstrumento: resultado.familiaInstrumento,
+    tags: resultado.tags,
   }));
 }
 
@@ -190,6 +215,13 @@ async function consultarClase(
     descripcion: resultado.descripcion,
     uri: resultado.uri,
     origen: `Clase: ${termino}`,
+    periodoHistorico: resultado.periodoHistorico,
+    complejidadTecnica: resultado.complejidadTecnica,
+    anioLanzamiento: resultado.anioLanzamiento,
+    autor: resultado.autor,
+    instrumentoRequerido: resultado.instrumentoRequerido,
+    familiaInstrumento: resultado.familiaInstrumento,
+    tags: resultado.tags,
   }));
 }
 
@@ -231,6 +263,8 @@ async function consultarDbpedia(
       genres: resultado.genres,
       instruments: resultado.instruments,
       birthPlaces: resultado.birthPlaces,
+      deathPlaces: resultado.deathPlaces,
+      occupations: resultado.occupations,
       nationalities: resultado.nationalities,
       notableWorks: resultado.notableWorks,
       thumbnail: resultado.thumbnail,
@@ -311,7 +345,7 @@ export async function buscar(
     const resultadosDbpedia = await consultarDbpedia(termino, signal, locale);
     acumulados.push(...resultadosDbpedia);
     onUpdate?.(crearRespuesta(acumulados));
-  } catch (error) {
+  } catch {
     if (signal?.aborted) {
       throw new DOMException('Busqueda cancelada', 'AbortError');
     }
