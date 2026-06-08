@@ -57,6 +57,37 @@ SYNONYMS = {
     "baja": ["baja", "bajo", "low", "easy", "simple", "facil", "fácil", "basse", "facile"]
 }
 
+def guardar_ontologia():
+    """
+    Guarda físicamente musica.owl.
+    """
+    global _onto_instancia
+
+    if _onto_instancia is None:
+        return False
+
+    try:
+        _onto_instancia.save(file=ruta_ontologia)
+        print(f"[OWL] Ontología guardada en: {ruta_ontologia}")
+        return True
+
+    except Exception as e:
+        print(f"[OWL] Error al guardar ontología: {e}")
+        return False
+
+
+def recargar_ontologia():
+    """
+    Fuerza la recarga completa de musica.owl.
+    """
+    global _onto_instancia
+    global _serialized_cache
+
+    _onto_instancia = None
+    _serialized_cache.clear()
+
+    return cargar_y_razonar()
+
 def expandir_tokens(tokens):
     resultado = []
 

@@ -558,45 +558,121 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
         print(f"[DBpedia] Falló la conexión con el servicio Lookup: {e}")
         return []
 
-def poblar_ontologia_con_dbpedia(datos_remotos, nombre_clase_local="Compositor"):
+def poblar_ontologia_con_dbpedia(
+    datos_remotos,
+    nombre_clase_local="Compositor"
+):
     """
-    Inserta los datos recuperados de DBpedia directo en la memoria RAM 
-    de la ontología actual, manteniendo el backend compacto y veloz.
+    Inserta datos DBpedia y los guarda
+    permanentemente dentro de musica.owl
     """
+
     if not datos_remotos:
         return False
-        
+
     onto = motor_semantico.cargar_y_razonar()
+
     if not onto:
         return False
-    
-    print(f"[Poblado] Inyectando datos en la sesión activa bajo la clase '{nombre_clase_local}'...")
-    ClaseLocal = getattr(onto, nombre_clase_local, None)
-    
+
+    print(
+        f"[Poblado] Insertando datos DBpedia en '{nombre_clase_local}'..."
+    )
+
+    ClaseLocal = getattr(
+        onto,
+        nombre_clase_local,
+        None
+    )
+
     if ClaseLocal is None:
+
         with onto:
-            ClaseLocal = types.new_class(nombre_clase_local, (Thing,))
-        
+            ClaseLocal = types.new_class(
+                nombre_clase_local,
+                (Thing,)
+            )
+
+    nuevos = 0
+
     for item in datos_remotos:
-        id_individuo = item["nombre"].replace(" ", "_").replace(".", "").strip()
+
+        id_individuo = (
+            item["nombre"]
+            .replace(" ", "_")
+            .replace(".", "")
+            .replace(",", "")
+            .replace("(", "")
+            .replace(")", "")
+            .strip()
+        )
+
+        existente = onto.search_one(
+            iri=f"*{id_individuo}"
+        )
+
+        if existente:
+
+            print(
+                f"[Poblado] Ya existe: {id_individuo}"
+            )
+
+            continue
+
         try:
+
             with onto:
-                nuevo_individuo = ClaseLocal(id_individuo)
+
+                nuevo = ClaseLocal(id_individuo)
+
                 if hasattr(onto, "nombre"):
-                    nuevo_individuo.nombre.append(item["nombre"])
+                    nuevo.nombre.append(
+                        item["nombre"]
+                    )
+
                 if hasattr(onto, "descripcion"):
-                    nuevo_individuo.descripcion.append(item["descripcion"])
-                if hasattr(onto, "sameAs"):
-                    nuevo_individuo.sameAs.append(item["uri_dbpedia"])
-                
-            print(f"[Poblado] ¡Éxito! Individuo '{id_individuo}' guardado en memoria RAM.")
-            
-            # Eliminamos de la caché para forzar al motor a refrescar la lista
-            if id_individuo in motor_semantico._serialized_cache:
-                del motor_semantico._serialized_cache[id_individuo]
+                    nuevo.descripcion.append(
+                        item["descripcion"]
+                    )
+
+                if (
+                    hasattr(onto, "sameAs")
+                    and item.get("uri_dbpedia")
+                ):
+                    nuevo.sameAs.append(
+                        item["uri_dbpedia"]
+                    )
+
+            nuevos += 1
+
+            if (
+                id_individuo
+                in motor_semantico._serialized_cache
+            ):
+                del motor_semantico._serialized_cache[
+                    id_individuo
+                ]
+
+            print(
+                f"[Poblado] Guardado: {id_individuo}"
+            )
+
         except Exception as e:
-            pass # El individuo ya existía o está duplicado, se maneja de forma segura
-            
+
+            print(
+                f"[Poblado] Error con {id_individuo}: {e}"
+            )
+
+    if nuevos > 0:
+
+        print(
+            f"[Poblado] {nuevos} nuevos individuos añadidos."
+        )
+
+        motor_semantico.guardar_ontologia()
+
+        motor_semantico.recargar_ontologia()
+
     return True
 
 # ==========================================
