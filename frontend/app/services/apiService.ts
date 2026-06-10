@@ -1,5 +1,5 @@
 const API_BASE_URL = 'http://127.0.0.1:5000';
-const DBPEDIA_TIMEOUT_MS = 8000;
+const DBPEDIA_TIMEOUT_MS = 30000;
 
 const WARNING_MESSAGES: Record<string, { timeout: string; partial: string }> = {
   es: {
@@ -135,6 +135,36 @@ function fusionarResultados(resultados: SearchResult[]): SearchResult[] {
       ),
       descripcion: existente.descripcion ?? resultado.descripcion,
       uri: existente.uri ?? resultado.uri,
+      abstract: existente.abstract ?? resultado.abstract,
+      birthDate: existente.birthDate ?? resultado.birthDate,
+      deathDate: existente.deathDate ?? resultado.deathDate,
+      genres: Array.from(
+        new Set([...(existente.genres ?? []), ...(resultado.genres ?? [])])
+      ),
+      instruments: Array.from(
+        new Set([...(existente.instruments ?? []), ...(resultado.instruments ?? [])])
+      ),
+      birthPlaces: Array.from(
+        new Set([...(existente.birthPlaces ?? []), ...(resultado.birthPlaces ?? [])])
+      ),
+      nationalities: Array.from(
+        new Set([...(existente.nationalities ?? []), ...(resultado.nationalities ?? [])])
+      ),
+      notableWorks: Array.from(
+        new Set([...(existente.notableWorks ?? []), ...(resultado.notableWorks ?? [])])
+      ),
+      thumbnail: existente.thumbnail ?? resultado.thumbnail,
+      wikipediaPage: existente.wikipediaPage ?? resultado.wikipediaPage,
+      obrasCompuestas: Array.from(
+        new Set([...(existente.obrasCompuestas ?? []), ...(resultado.obrasCompuestas ?? [])])
+      ),
+      instrumentosObra: Array.from(
+        new Set([...(existente.instrumentosObra ?? []), ...(resultado.instrumentosObra ?? [])])
+      ),
+      compositorTexto:
+        existente.compositorTexto && existente.compositorTexto !== '-'
+          ? existente.compositorTexto
+          : resultado.compositorTexto,
       origen: Array.from(
         new Set([
           ...existente.origen.split(', '),

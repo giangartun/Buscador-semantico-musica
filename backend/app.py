@@ -48,13 +48,14 @@ def api_semantic_queries(query_name):
 @app.route('/api/dbpedia', methods=['GET'])
 def api_dbpedia():
     artista = request.args.get('nombre')
+    lang = request.args.get('lang')
 
     if not artista:
         return jsonify({
             "error": "Falta el parámetro nombre"
         }), 400
 
-    resultados = consultar_dbpedia_artistas(artista)
+    resultados = consultar_dbpedia_artistas(artista, lang)
 
     return jsonify({
         "total": len(resultados),
