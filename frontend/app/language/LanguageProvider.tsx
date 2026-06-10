@@ -43,7 +43,6 @@ function getNestedValue(source: Messages, path: string): string | undefined {
     if (!current || typeof current !== 'object') {
       return undefined;
     }
-
     current = (current as Record<string, unknown>)[part];
   }
 
@@ -64,51 +63,57 @@ function interpolate(
   });
 }
 
+// Lee el locale guardado solo en el cliente; en SSR devuelve 'es'.
+function getInitialLocale(): Locale {
+  if (typeof window === 'undefined') return 'es';
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (stored && LOCALES.includes(stored as Locale)) {
+    return stored as Locale;
+  }
+  return 'es';
+}
+
 export default function LanguageProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === 'undefined') {
-      return 'es';
-    }
-
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored && LOCALES.includes(stored as Locale) ? (stored as Locale) : 'es';
-  });
-
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, locale);
-    document.documentElement.lang = locale;
-  }, [locale]);
+  // useState con función de inicialización: se ejecuta solo en el cliente,
+  // así el estado arranca con el valor correcto sin necesitar un efecto.
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale);
+    window.localStorage.setItem(STORAGE_KEY, nextLocale);
+    document.documentElement.lang = nextLocale;
   }, []);
+
+  // Sincroniza el atributo lang del <html> al montar, sin setState.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>) => {
       const messages = MESSAGES[locale] ?? MESSAGES.es;
       const fallback = MESSAGES.es;
-      const template = getNestedValue(messages, key) ?? getNestedValue(fallback, key) ?? key;
+      const template =
+        getNestedValue(messages, key) ??
+        getNestedValue(fallback, key) ??
+        key;
       return interpolate(template, vars);
     },
     [locale]
   );
 
   const value = useMemo(
-    () => ({
-      locale,
-      setLocale,
-      t,
-    }),
+    () => ({ locale, setLocale, t }),
     [locale, setLocale, t]
   );
 
   return (
     <LanguageContext.Provider value={value}>
-      {children}
+      <div suppressHydrationWarning>{children}</div>
     </LanguageContext.Provider>
   );
 }

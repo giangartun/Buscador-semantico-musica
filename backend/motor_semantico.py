@@ -57,6 +57,37 @@ SYNONYMS = {
     "baja": ["baja", "bajo", "low", "easy", "simple", "facil", "fácil", "basse", "facile"]
 }
 
+def guardar_ontologia():
+    """
+    Guarda físicamente musica.owl.
+    """
+    global _onto_instancia
+
+    if _onto_instancia is None:
+        return False
+
+    try:
+        _onto_instancia.save(file=ruta_ontologia)
+        print(f"[OWL] Ontología guardada en: {ruta_ontologia}")
+        return True
+
+    except Exception as e:
+        print(f"[OWL] Error al guardar ontología: {e}")
+        return False
+
+
+def recargar_ontologia():
+    """
+    Fuerza la recarga completa de musica.owl.
+    """
+    global _onto_instancia
+    global _serialized_cache
+
+    _onto_instancia = None
+    _serialized_cache.clear()
+
+    return cargar_y_razonar()
+
 def expandir_tokens(tokens):
     resultado = []
 
@@ -91,12 +122,11 @@ def cargar_y_razonar():
         try:
             with onto:
                 sync_reasoner(infer_property_values=True)
-        except Exception as reasoner_error:
-            # Si HermiT falla, conservamos la ontología cargada para no romper la búsqueda.
-            print(f"[Motor] Razonador no disponible, usando ontología sin inferencias: {reasoner_error}")
-
+        except Exception as razonador_error:
+            print(f"[Motor] Razonador no disponible, continuando con relaciones directas: {razonador_error}")
+            
         _onto_instancia = onto
-        print("[Motor] ¡Ontología cargada en memoria!")
+        print("[Motor] ¡Ontología Académica e Inferencias listas en memoria!")
         return _onto_instancia
         
     except Exception as e:
@@ -135,213 +165,128 @@ def get_first_value(individual, property_name, default="-"):
     except:
         return default
 
+def get_relation_values(individual, property_names):
+    values = []
+
+    for property_name in property_names:
+        try:
+            values.extend(getattr(individual, property_name, []))
+        except:
+            pass
+
+    return values
+
+def unique_clean_names(values):
+    seen = set()
+    cleaned = []
+
+    for value in values:
+        name = clean_ontology_name(value)
+        key = normalize_text(name)
+
+        if name and name != "-" and key not in seen:
+            seen.add(key)
+            cleaned.append(name)
+
+    return cleaned
+
+def find_related_by_property(target, property_names):
+    onto = cargar_y_razonar()
+    related = []
+
+    if not onto:
+        return related
+
+    for candidate in onto.individuals():
+        for value in get_relation_values(candidate, property_names):
+            if value == target:
+                related.append(candidate)
+                break
+
+    return related
+
 # ==========================================
 # SERIALIZADOR DE INDIVIDUOS PARA EL FRONTEND
 # ==========================================
 def serialize_element(ind):
     """Transforma un individuo complejo de Owlready2 en un diccionario plano con caché."""
-
     if ind.name in _serialized_cache:
         return dict(_serialized_cache[ind.name])
 
-    # =========================
-    # PROPIEDADES DE DATOS
-    # =========================
-
+    # Propiedades de datos teóricas e históricas
     nombre = get_first_value(ind, "nombre", ind.name)
     descripcion = get_first_value(ind, "descripcion", "-")
-    periodo = get_first_value(ind, "periodoHistorico", "-")
-    dificultad = get_first_value(ind, "complejidadTecnica", "-")
-    anio = get_first_value(ind, "anioLanzamiento", "-")
+    periodo = get_first_value(ind, "periodoHistorico", "-")       # Ej: Barroco, Romántico
+    dificultad = get_first_value(ind, "complejidadTecnica", "-")   # Ej: Alta, Media, Baja
+    anio = get_first_value(ind, "anioLanzamiento", "-")            # Año de composición o publicación
 
-    # =========================
-    # RELACIONES ANTIGUAS
-    # =========================
+    # Relaciones entre objetos
+    creador = clean_ontology_name(get_first_value(ind, "creadoPor", None))          # Obras -> Autor
+    instrumento = clean_ontology_name(get_first_value(ind, "seTocaCon", None))      # Obras -> Instrumento
+    familia = clean_ontology_name(get_first_value(ind, "perteneceAFamilia", None))  # Instrumentos -> Familia técnica
 
-    creador = clean_ontology_name(
-        get_first_value(ind, "creadoPor", None)
+    # Obras compuestas por este individuo. Usa la inversa inferida y un
+    # respaldo directo sobre las obras que apuntan al compositor.
+    obras_compuestas = unique_clean_names(
+        get_relation_values(ind, ["compuso"]) +
+        find_related_by_property(ind, ["compuestaPor"])
     )
 
-    instrumento = clean_ontology_name(
-        get_first_value(ind, "seTocaCon", None)
+    # Instrumentos que interpretan o requiere esta obra.
+    instrumentos_obra = unique_clean_names(
+        get_relation_values(ind, ["interpretadaPor", "seTocaCon"])
     )
 
-    familia = clean_ontology_name(
-        get_first_value(ind, "perteneceAFamilia", None)
+    # Compositor desde data property (para Obras que tienen 'compositor' como string)
+    compositor_dp = "-"
+    try:
+        vals = list(getattr(ind, "compositor", []))
+        if vals:
+            compositor_dp = str(vals[0])
+    except:
+        pass
+
+    compositores_relacionados = unique_clean_names(
+        get_relation_values(ind, ["compuestaPor", "creadoPor"])
     )
 
-    # =========================
-    # TAGS
-    # =========================
+    if compositor_dp == "-" and compositores_relacionados:
+        compositor_dp = compositores_relacionados[0]
 
+    if creador == "-" and compositores_relacionados:
+        creador = compositores_relacionados[0]
+
+    if instrumento == "-" and instrumentos_obra:
+        instrumento = instrumentos_obra[0]
+
+    # Mapeo de Tags dinámicos según propiedades booleanas de la ontología
     tags = []
+    if to_bool(get_first_value(ind, "esAcustico", False)): tags.append("Acústico")
+    if to_bool(get_first_value(ind, "requiereAfinacion", False)): tags.append("Requiere Afinación")
+    if to_bool(get_first_value(ind, "esPolifonica", False)): tags.append("Polifónica")
 
-    if to_bool(get_first_value(ind, "esAcustico", False)):
-        tags.append("Acústico")
-
-    if to_bool(get_first_value(ind, "requiereAfinacion", False)):
-        tags.append("Requiere Afinación")
-
-    if to_bool(get_first_value(ind, "esPolifonica", False)):
-        tags.append("Polifónica")
-
-    clases = [
-        clase.name
-        for clase in ind.is_a
-        if hasattr(clase, "name")
-    ]
-
-    for c in clases:
-        if c != "NamedIndividual":
-            tags.append(c)
-
-    # =========================
-    # TIPO PRINCIPAL
-    # =========================
-
-    tipo = "Entidad"
-
-    if "Compositor" in clases:
-        tipo = "Compositor"
-
-    elif "Obra" in clases:
-        tipo = "Obra"
-
-    elif "Instrumento" in clases:
-        tipo = "Instrumento"
-
-    # =========================
-    # NUEVAS RELACIONES
-    # =========================
-
-    obras_compuestas = []
-    compositores_obra = []
-    instrumentos_obra = []
-    obras_instrumento = []
-
-    # Compositor -> Obras
-    try:
-
-        if hasattr(ind, "compuso"):
-
-            obras_compuestas = [
-                {
-                    "id": obra.name,
-                    "nombre": clean_ontology_name(
-                        get_first_value(
-                            obra,
-                            "nombre",
-                            obra.name
-                        )
-                    )
-                }
-                for obra in ind.compuso
-            ]
-
-    except Exception as e:
-        print(f"Error compuso: {e}")
-
-    # Obra -> Compositor
-    try:
-
-        if hasattr(ind, "compuestaPor"):
-
-            compositores_obra = [
-                {
-                    "id": comp.name,
-                    "nombre": clean_ontology_name(
-                        get_first_value(
-                            comp,
-                            "nombre",
-                            comp.name
-                        )
-                    )
-                }
-                for comp in ind.compuestaPor
-            ]
-
-    except Exception as e:
-        print(f"Error compuestaPor: {e}")
-
-    # Obra -> Instrumentos
-    try:
-
-        if hasattr(ind, "interpretadaPor"):
-
-            instrumentos_obra = [
-                {
-                    "id": inst.name,
-                    "nombre": clean_ontology_name(
-                        get_first_value(
-                            inst,
-                            "nombre",
-                            inst.name
-                        )
-                    )
-                }
-                for inst in ind.interpretadaPor
-            ]
-
-    except Exception as e:
-        print(f"Error interpretadaPor: {e}")
-
-    # Instrumento -> Obras
-    try:
-
-        if hasattr(ind, "esInstrumentoDe"):
-
-            obras_instrumento = [
-                {
-                    "id": obra.name,
-                    "nombre": clean_ontology_name(
-                        get_first_value(
-                            obra,
-                            "nombre",
-                            obra.name
-                        )
-                    )
-                }
-                for obra in ind.esInstrumentoDe
-            ]
-
-    except Exception as e:
-        print(f"Error esInstrumentoDe: {e}")
-
-    # =========================
-    # RESULTADO FINAL
-    # =========================
+    clases = [clase.name for clase in ind.is_a if hasattr(clase, 'name')]
+    for c in clases: 
+        if c != "NamedIndividual": tags.append(c)
 
     data = {
         "id": ind.name,
-        "tipo": tipo,
-
         "nombre": clean_ontology_name(nombre),
         "descripcion": str(descripcion),
-
         "periodoHistorico": str(periodo),
         "complejidadTecnica": str(dificultad),
         "anioLanzamiento": str(anio),
-
         "autor": creador,
         "instrumentoRequerido": instrumento,
         "familiaInstrumento": familia,
-
         "clases": clases,
         "tags": tags,
-
-        # Relaciones semánticas
-
         "obrasCompuestas": obras_compuestas,
-
-        "compositores": compositores_obra,
-
-        "instrumentos": instrumentos_obra,
-
-        "obras": obras_instrumento
+        "instrumentosObra": instrumentos_obra,
+        "compositorTexto": compositor_dp,
     }
-
+    
     _serialized_cache[ind.name] = data
-
     return dict(data)
 
 # ==========================================
@@ -384,9 +329,12 @@ def buscar_por_texto(palabra_clave):
         campos = {
             "nombre": normalize_text(data["nombre"]),
             "autor": normalize_text(data["autor"]),
+            "compositor": normalize_text(data["compositorTexto"]),
             "periodo": normalize_text(data["periodoHistorico"]),
             "instrumento": normalize_text(data["instrumentoRequerido"]),
+            "instrumentos_obra": normalize_text(" ".join(data["instrumentosObra"])),
             "familia": normalize_text(data["familiaInstrumento"]),
+            "obras_compuestas": normalize_text(" ".join(data["obrasCompuestas"])),
             "tags": normalize_text(" ".join(data["tags"]))
         }
 
@@ -398,10 +346,19 @@ def buscar_por_texto(palabra_clave):
             if token in campos["autor"]:
                 score += 15
 
+            if token in campos["compositor"]:
+                score += 15
+
+            if token in campos["obras_compuestas"]:
+                score += 12
+
             if token in campos["familia"]:
                 score += 10
 
             if token in campos["instrumento"]:
+                score += 10
+
+            if token in campos["instrumentos_obra"]:
                 score += 10
 
             if token in campos["periodo"]:
@@ -502,7 +459,8 @@ def q_obras_por_autor(param):
     if not param: return []
     p = normalize_text(param)
     return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
-            if p in normalize_text(serialize_element(ind)["autor"])]
+            if p in normalize_text(serialize_element(ind)["autor"])
+            or p in normalize_text(serialize_element(ind)["compositorTexto"])]
 
 SEMANTIC_QUERY_MAP = {
     # --- FILTROS POR FAMILIAS DE INSTRUMENTOS (ES / EN / FR) ---

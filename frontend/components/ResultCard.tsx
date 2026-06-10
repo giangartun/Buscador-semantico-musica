@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useI18n } from '../app/language/LanguageProvider';
 
 interface ResultCardProps {
@@ -9,25 +8,20 @@ interface ResultCardProps {
   classes?: string[];
   source: string;
   uri?: string;
-  periodoHistorico?: string;
-  complejidadTecnica?: string;
-  anioLanzamiento?: string;
-  autor?: string;
-  instrumentoRequerido?: string;
-  familiaInstrumento?: string;
-  tags?: string[];
   abstract?: string;
   birthDate?: string;
   deathDate?: string;
   genres?: string[];
   instruments?: string[];
   birthPlaces?: string[];
-  deathPlaces?: string[];
-  occupations?: string[];
   nationalities?: string[];
   notableWorks?: string[];
   thumbnail?: string;
   wikipediaPage?: string;
+  // Relaciones de la ontología local
+  obrasCompuestas?: string[];
+  instrumentosObra?: string[];
+  compositorTexto?: string;
 }
 
 export default function ResultCard({
@@ -36,43 +30,27 @@ export default function ResultCard({
   classes = [],
   source,
   uri,
-  periodoHistorico,
-  complejidadTecnica,
-  anioLanzamiento,
-  autor,
-  instrumentoRequerido,
-  familiaInstrumento,
-  tags,
   abstract,
   birthDate,
   deathDate,
   genres,
   instruments,
   birthPlaces,
-  deathPlaces,
-  occupations,
   nationalities,
   notableWorks,
   thumbnail,
   wikipediaPage,
+  obrasCompuestas,
+  instrumentosObra,
+  compositorTexto,
 }: ResultCardProps) {
   const { t } = useI18n();
   const sourceIsDbpedia = source.includes('DBpedia');
-  const hasLocalMetadata =
-    periodoHistorico ||
-    complejidadTecnica ||
-    anioLanzamiento ||
-    autor ||
-    instrumentoRequerido ||
-    familiaInstrumento ||
-    (tags && tags.length > 0);
   const hasExtraDbpedia =
     sourceIsDbpedia &&
     (abstract || birthDate || deathDate || (genres && genres.length > 0) ||
       (instruments && instruments.length > 0) ||
       (birthPlaces && birthPlaces.length > 0) ||
-        (deathPlaces && deathPlaces.length > 0) ||
-        (occupations && occupations.length > 0) ||
       (nationalities && nationalities.length > 0) ||
       (notableWorks && notableWorks.length > 0) ||
       thumbnail || wikipediaPage);
@@ -130,85 +108,50 @@ export default function ResultCard({
             </div>
           )}
 
-          {hasLocalMetadata && (
+          {compositorTexto && compositorTexto !== '-' && (
             <div>
               <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                {t('result.localDetails')}
+                Compositor
               </p>
+              <span className="px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-md">
+                {compositorTexto}
+              </span>
+            </div>
+          )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                {periodoHistorico && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.period')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{periodoHistorico}</span>
-                  </div>
-                )}
-
-                {complejidadTecnica && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.difficulty')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{complejidadTecnica}</span>
-                  </div>
-                )}
-
-                {anioLanzamiento && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.year')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{anioLanzamiento}</span>
-                  </div>
-                )}
-
-                {autor && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.author')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{autor}</span>
-                  </div>
-                )}
-
-                {instrumentoRequerido && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.instrumentRequired')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{instrumentoRequerido}</span>
-                  </div>
-                )}
-
-                {familiaInstrumento && (
-                  <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-                    <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      {t('result.instrumentFamily')}
-                    </span>
-                    <span className="text-slate-700 dark:text-slate-200">{familiaInstrumento}</span>
-                  </div>
-                )}
+          {obrasCompuestas && obrasCompuestas.length > 0 && (
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                Obras
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {obrasCompuestas.map((obra) => (
+                  <span
+                    key={obra}
+                    className="px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-md"
+                  >
+                    {obra}
+                  </span>
+                ))}
               </div>
+            </div>
+          )}
 
-              {tags && tags.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                    {t('result.tags')}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {instrumentosObra && instrumentosObra.length > 0 && (
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                Instrumentos
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {instrumentosObra.map((inst) => (
+                  <span
+                    key={inst}
+                    className="px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-md"
+                  >
+                    {inst}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
@@ -246,43 +189,12 @@ export default function ResultCard({
             </p>
 
             {thumbnail && (
-              <Image
+              <img
                 src={thumbnail}
                 alt={title}
-                width={800}
-                height={450}
-                className="w-full h-auto max-h-56 object-contain rounded-md mb-3"
-                sizes="100vw"
+                className="w-full max-h-56 object-contain rounded-md mb-3"
+                loading="lazy"
               />
-            )}
-
-            {(periodoHistorico || complejidadTecnica || anioLanzamiento || autor || instrumentoRequerido || familiaInstrumento || (tags && tags.length > 0)) && (
-              <div className="mb-3">
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  {t('result.localDetails')}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {periodoHistorico && <div><span className="text-slate-400">{t('result.period')}:</span> <span className="text-slate-600 dark:text-slate-300">{periodoHistorico}</span></div>}
-                  {complejidadTecnica && <div><span className="text-slate-400">{t('result.difficulty')}:</span> <span className="text-slate-600 dark:text-slate-300">{complejidadTecnica}</span></div>}
-                  {anioLanzamiento && <div><span className="text-slate-400">{t('result.year')}:</span> <span className="text-slate-600 dark:text-slate-300">{anioLanzamiento}</span></div>}
-                  {autor && <div><span className="text-slate-400">{t('result.author')}:</span> <span className="text-slate-600 dark:text-slate-300">{autor}</span></div>}
-                  {instrumentoRequerido && <div><span className="text-slate-400">{t('result.instrumentRequired')}:</span> <span className="text-slate-600 dark:text-slate-300">{instrumentoRequerido}</span></div>}
-                  {familiaInstrumento && <div><span className="text-slate-400">{t('result.instrumentFamily')}:</span> <span className="text-slate-600 dark:text-slate-300">{familiaInstrumento}</span></div>}
-                </div>
-
-                {tags && tags.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
             )}
 
             {abstract && (
@@ -347,42 +259,6 @@ export default function ResultCard({
                       className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
                     >
                       {place}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {deathPlaces && deathPlaces.length > 0 && (
-              <div className="mb-3">
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  {t('result.deathPlace')}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {deathPlaces.map((place) => (
-                    <span
-                      key={place}
-                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
-                    >
-                      {place}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {occupations && occupations.length > 0 && (
-              <div className="mb-3">
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                  {t('result.occupations')}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {occupations.map((occupation) => (
-                    <span
-                      key={occupation}
-                      className="px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md"
-                    >
-                      {occupation}
                     </span>
                   ))}
                 </div>
