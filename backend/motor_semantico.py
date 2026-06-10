@@ -136,46 +136,208 @@ def get_first_value(individual, property_name, default="-"):
 # ==========================================
 def serialize_element(ind):
     """Transforma un individuo complejo de Owlready2 en un diccionario plano con caché."""
+
     if ind.name in _serialized_cache:
         return dict(_serialized_cache[ind.name])
 
-    # Propiedades de datos teóricas e históricas
+    # =========================
+    # PROPIEDADES DE DATOS
+    # =========================
+
     nombre = get_first_value(ind, "nombre", ind.name)
     descripcion = get_first_value(ind, "descripcion", "-")
-    periodo = get_first_value(ind, "periodoHistorico", "-")       # Ej: Barroco, Romántico
-    dificultad = get_first_value(ind, "complejidadTecnica", "-")   # Ej: Alta, Media, Baja
-    anio = get_first_value(ind, "anioLanzamiento", "-")            # Año de composición o publicación
+    periodo = get_first_value(ind, "periodoHistorico", "-")
+    dificultad = get_first_value(ind, "complejidadTecnica", "-")
+    anio = get_first_value(ind, "anioLanzamiento", "-")
 
-    # Relaciones entre objetos
-    creador = clean_ontology_name(get_first_value(ind, "creadoPor", None))          # Obras -> Autor
-    instrumento = clean_ontology_name(get_first_value(ind, "seTocaCon", None))      # Obras -> Instrumento
-    familia = clean_ontology_name(get_first_value(ind, "perteneceAFamilia", None))  # Instrumentos -> Familia técnica
+    # =========================
+    # RELACIONES ANTIGUAS
+    # =========================
 
-    # Mapeo de Tags dinámicos según propiedades booleanas de la ontología
+    creador = clean_ontology_name(
+        get_first_value(ind, "creadoPor", None)
+    )
+
+    instrumento = clean_ontology_name(
+        get_first_value(ind, "seTocaCon", None)
+    )
+
+    familia = clean_ontology_name(
+        get_first_value(ind, "perteneceAFamilia", None)
+    )
+
+    # =========================
+    # TAGS
+    # =========================
+
     tags = []
-    if to_bool(get_first_value(ind, "esAcustico", False)): tags.append("Acústico")
-    if to_bool(get_first_value(ind, "requiereAfinacion", False)): tags.append("Requiere Afinación")
-    if to_bool(get_first_value(ind, "esPolifonica", False)): tags.append("Polifónica")
 
-    clases = [clase.name for clase in ind.is_a if hasattr(clase, 'name')]
-    for c in clases: 
-        if c != "NamedIndividual": tags.append(c)
+    if to_bool(get_first_value(ind, "esAcustico", False)):
+        tags.append("Acústico")
+
+    if to_bool(get_first_value(ind, "requiereAfinacion", False)):
+        tags.append("Requiere Afinación")
+
+    if to_bool(get_first_value(ind, "esPolifonica", False)):
+        tags.append("Polifónica")
+
+    clases = [
+        clase.name
+        for clase in ind.is_a
+        if hasattr(clase, "name")
+    ]
+
+    for c in clases:
+        if c != "NamedIndividual":
+            tags.append(c)
+
+    # =========================
+    # TIPO PRINCIPAL
+    # =========================
+
+    tipo = "Entidad"
+
+    if "Compositor" in clases:
+        tipo = "Compositor"
+
+    elif "Obra" in clases:
+        tipo = "Obra"
+
+    elif "Instrumento" in clases:
+        tipo = "Instrumento"
+
+    # =========================
+    # NUEVAS RELACIONES
+    # =========================
+
+    obras_compuestas = []
+    compositores_obra = []
+    instrumentos_obra = []
+    obras_instrumento = []
+
+    # Compositor -> Obras
+    try:
+
+        if hasattr(ind, "compuso"):
+
+            obras_compuestas = [
+                {
+                    "id": obra.name,
+                    "nombre": clean_ontology_name(
+                        get_first_value(
+                            obra,
+                            "nombre",
+                            obra.name
+                        )
+                    )
+                }
+                for obra in ind.compuso
+            ]
+
+    except Exception as e:
+        print(f"Error compuso: {e}")
+
+    # Obra -> Compositor
+    try:
+
+        if hasattr(ind, "compuestaPor"):
+
+            compositores_obra = [
+                {
+                    "id": comp.name,
+                    "nombre": clean_ontology_name(
+                        get_first_value(
+                            comp,
+                            "nombre",
+                            comp.name
+                        )
+                    )
+                }
+                for comp in ind.compuestaPor
+            ]
+
+    except Exception as e:
+        print(f"Error compuestaPor: {e}")
+
+    # Obra -> Instrumentos
+    try:
+
+        if hasattr(ind, "interpretadaPor"):
+
+            instrumentos_obra = [
+                {
+                    "id": inst.name,
+                    "nombre": clean_ontology_name(
+                        get_first_value(
+                            inst,
+                            "nombre",
+                            inst.name
+                        )
+                    )
+                }
+                for inst in ind.interpretadaPor
+            ]
+
+    except Exception as e:
+        print(f"Error interpretadaPor: {e}")
+
+    # Instrumento -> Obras
+    try:
+
+        if hasattr(ind, "esInstrumentoDe"):
+
+            obras_instrumento = [
+                {
+                    "id": obra.name,
+                    "nombre": clean_ontology_name(
+                        get_first_value(
+                            obra,
+                            "nombre",
+                            obra.name
+                        )
+                    )
+                }
+                for obra in ind.esInstrumentoDe
+            ]
+
+    except Exception as e:
+        print(f"Error esInstrumentoDe: {e}")
+
+    # =========================
+    # RESULTADO FINAL
+    # =========================
 
     data = {
         "id": ind.name,
+        "tipo": tipo,
+
         "nombre": clean_ontology_name(nombre),
         "descripcion": str(descripcion),
+
         "periodoHistorico": str(periodo),
         "complejidadTecnica": str(dificultad),
         "anioLanzamiento": str(anio),
+
         "autor": creador,
         "instrumentoRequerido": instrumento,
         "familiaInstrumento": familia,
+
         "clases": clases,
-        "tags": tags
+        "tags": tags,
+
+        # Relaciones semánticas
+
+        "obrasCompuestas": obras_compuestas,
+
+        "compositores": compositores_obra,
+
+        "instrumentos": instrumentos_obra,
+
+        "obras": obras_instrumento
     }
-    
+
     _serialized_cache[ind.name] = data
+
     return dict(data)
 
 # ==========================================
