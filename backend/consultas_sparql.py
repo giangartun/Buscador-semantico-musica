@@ -283,11 +283,41 @@ STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "pa
 
 SUPPORTED_LANGS = {"es", "en", "fr"}
 
+RESOURCE_LABELS = {
+    "Guitar": {"es": "Guitarra", "en": "Guitar", "fr": "Guitare"},
+    "Violin": {"es": "Violín", "en": "Violin", "fr": "Violon"},
+    "Flute": {"es": "Flauta", "en": "Flute", "fr": "Flûte"},
+    "Clarinet": {"es": "Clarinete", "en": "Clarinet", "fr": "Clarinette"},
+    "Trumpet": {"es": "Trompeta", "en": "Trumpet", "fr": "Trompette"},
+    "Piano": {"es": "Piano", "en": "Piano", "fr": "Piano"},
+    "Harp": {"es": "Arpa", "en": "Harp", "fr": "Harpe"},
+    "Mandolin": {"es": "Mandolina", "en": "Mandolin", "fr": "Mandoline"},
+    "Trombone": {"es": "Trombón", "en": "Trombone", "fr": "Trombone"},
+    "Tuba": {"es": "Tuba", "en": "Tuba", "fr": "Tuba"},
+    "Oboe": {"es": "Oboe", "en": "Oboe", "fr": "Hautbois"},
+}
+
+RESOURCE_DESCRIPTIONS = {
+    "es": "Recurso histórico musical de alta relevancia en DBpedia.",
+    "en": "Highly relevant historical music resource from DBpedia.",
+    "fr": "Ressource musicale historique très pertinente de DBpedia.",
+}
+
 def _normalize_lang(lang):
     if not lang:
         return "es"
     lang = str(lang).lower()
     return lang if lang in SUPPORTED_LANGS else "es"
+
+def _resource_label(resource_name, lang):
+    lang_code = _normalize_lang(lang)
+    return RESOURCE_LABELS.get(resource_name, {}).get(
+        lang_code,
+        resource_name.replace("_", " ")
+    )
+
+def _resource_description(lang):
+    return RESOURCE_DESCRIPTIONS[_normalize_lang(lang)]
 
 def _safe_first(values, default=None):
     if not values:
@@ -473,7 +503,7 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
         if indicador in termino_limpio:
             posible_autor = termino_limpio.split(indicador)[-1].strip()
             print(f"[DBpedia Redirección Trilingüe] Detectado listado complejo. Buscando directamente al autor: '{posible_autor}'")
-            return consultar_dbpedia_artistas(posible_autor)
+            return consultar_dbpedia_artistas(posible_autor, lang)
 
     # Contingencia secundaria por palabras clave sueltas de listados estructurales
     autores_sistema = ["vivaldi", "piazzolla", "liszt", "chopin", "jarre", "bach", "beethoven", "paganini", "tchaikovsky", "rachmaninoff", "mozart", "debussy", "strauss", "handel", "schubert"]
@@ -481,7 +511,7 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
         for autor in autores_sistema:
             if autor in termino_limpio:
                 print(f"[DBpedia Contingencia] Extrayendo palabra raíz del autor: '{autor}'")
-                return consultar_dbpedia_artistas(autor)
+                return consultar_dbpedia_artistas(autor, lang)
 
     # =========================================================================
     # Estrategia 1: Mapeo directo por diccionario (REPLAZADO Y BLINDADO)
@@ -503,12 +533,12 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
                 }
             else:
                 # Solo hace la llamada SPARQL real para la biografía principal del autor
-                detalles = consultar_dbpedia_detalles(uri)
+                detalles = consultar_dbpedia_detalles(uri, lang)
 
             resultados.append({
                 "uri_dbpedia": uri,
-                "nombre": res.replace("_", " "),
-                "descripcion": f"Recurso histórico musical de alta relevancia en DBpedia.",
+                "nombre": _resource_label(res, lang),
+                "descripcion": _resource_description(lang),
                 **detalles,
             })
 

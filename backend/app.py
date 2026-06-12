@@ -7,6 +7,7 @@ from motor_semantico import (
     obtener_clases, 
     obtener_detalle_individuo,
     detectar_consulta_semantica,
+    detectar_idioma_busqueda,
     ejecutar_consulta_semantica_musical
 )
 from queries_config import get_query_info
@@ -31,12 +32,13 @@ def api_semantic_queries(query_name):
 
     # Captura el parámetro opcional si la consulta lo requiere (ej. ?param=Mozart)
     param = request.args.get('param')
+    lang = request.args.get('lang')
 
     if info.get("requires_param") and not param:
         return jsonify({"error": "Falta el parámetro 'param' para esta consulta."}), 400
 
     handler = info.get("handler")
-    resultados = handler(param) if info.get("requires_param") else handler()
+    resultados = handler(param, lang) if info.get("requires_param") else handler(lang)
 
     return jsonify({
         "title": info["title"],
@@ -55,7 +57,8 @@ def api_dbpedia():
             "error": "Falta el parámetro nombre"
         }), 400
 
-    resultados = consultar_dbpedia_artistas(artista, lang)
+    idioma_resultado = detectar_idioma_busqueda(artista, lang)
+    resultados = consultar_dbpedia_artistas(artista, idioma_resultado)
 
     return jsonify({
         "total": len(resultados),
@@ -91,13 +94,15 @@ def api_clases():
 def api_buscar():
     palabra_clave = request.args.get('texto')
     nombre_clase = request.args.get('clase')
+    lang = request.args.get('lang')
+    idioma_resultado = detectar_idioma_busqueda(palabra_clave or nombre_clase, lang)
     
     resultados = []
 
     # 1. Caso: Se solicita filtrar estrictamente por clase de la ontología
     if nombre_clase:
         try:
-            resultados = buscar_individuos_por_clase(nombre_clase)
+            resultados = buscar_individuos_por_clase(nombre_clase, idioma_resultado)
         except Exception as e:
             print(f"[Error] Falló la búsqueda por clase '{nombre_clase}': {e}")
             resultados = []
@@ -109,10 +114,11 @@ def api_buscar():
         if consulta_semantica:
             resultados = ejecutar_consulta_semantica_musical(
                 consulta_semantica,
-                consulta_param
+                consulta_param,
+                idioma_resultado
             )
         else:
-            resultados = buscar_por_texto(palabra_clave)
+            resultados = buscar_por_texto(palabra_clave, idioma_resultado)
             
     else:
         return jsonify({

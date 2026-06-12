@@ -1,4 +1,5 @@
 import os
+import re
 import unicodedata
 from owlready2 import *
 
@@ -11,6 +12,68 @@ _serialized_cache = {}
 
 # Prefijos semánticos típicos a remover para limpiar la interfaz del frontend
 PREFIXES_TO_REMOVE = ["Inst_", "Art_", "Gen_", "Alb_", "Can_", "Obra_", "Aut_"]
+SUPPORTED_LANGS = {"es", "en", "fr"}
+
+LANGUAGE_HINTS = {
+    "es": {
+        "acordeon", "aerofono", "arpa", "autor", "barroco", "baja", "cancion",
+        "clasico", "clarinete", "composicion", "composiciones", "compositor",
+        "concierto", "cuerda", "cuerdas", "facil", "flauta", "guitarra",
+        "instrumento", "instrumentos", "mandolina", "metal", "musico", "obra",
+        "obras", "percusion", "piano", "romantico", "saxofon", "sinfonia",
+        "sonata", "teclado", "trombon", "trompeta", "viento", "violin",
+    },
+    "en": {
+        "accordion", "aerophone", "author", "baroque", "clarinet", "classic",
+        "classical", "composition", "compositions", "composer", "concerto",
+        "easy", "flute", "guitar", "harp", "instrument", "instruments",
+        "keyboard", "mandolin", "metal", "music", "musician", "percussion",
+        "piece", "pieces", "piano", "romantic", "saxophone", "song", "sonata",
+        "string", "strings", "symphony", "trombone", "trumpet", "violin",
+        "wind", "work", "works",
+    },
+    "fr": {
+        "accordeon", "aerophone", "auteur", "baroque", "chanson", "clarinette",
+        "classique", "compositeur", "composition", "compositions", "concerto",
+        "corde", "cordes", "facile", "flute", "guitare", "harpe",
+        "instrument", "instruments", "mandoline", "metal", "morceau",
+        "morceaux", "musicien", "oeuvre", "oeuvres", "percussion", "piano",
+        "romantique", "saxophone", "sonate", "symphonie", "trombone",
+        "trompette", "vent", "violon",
+    },
+}
+
+LANGUAGE_RAW_HINTS = {
+    "es": {
+        "acordeón", "aerófono", "canción", "clásico", "composición",
+        "fácil", "músico", "percusión", "romántico", "saxofón",
+        "sinfonía", "trombón", "violín",
+    },
+    "fr": {
+        "à", "flûte", "flûtes", "métal", "métaux", "œuvre", "œuvres",
+        "pièce", "prélude", "préludes",
+    },
+}
+
+LANGUAGE_STOPWORDS = {
+    "es": {"de", "del", "la", "el", "los", "las", "para", "por", "con"},
+    "en": {"of", "by", "the", "for", "with", "and"},
+    "fr": {"de", "des", "du", "la", "le", "les", "pour", "avec", "et"},
+}
+
+LANGUAGE_EXACT_OVERRIDES = {
+    "violin": "en",
+    "flute": "en",
+    "trumpet": "en",
+    "clarinet": "en",
+    "harp": "en",
+    "keyboard": "en",
+    "string": "en",
+    "strings": "en",
+    "wind": "en",
+    "work": "en",
+    "works": "en",
+}
 
 SYNONYMS = {
     # Instrumentos (ES / EN / FR)
@@ -55,6 +118,133 @@ SYNONYMS = {
     "alta": ["alta", "alto", "high", "hard", "complex", "difficult", "avanzado", "advanced", "haute", "complexe", "difficile"],
     "media": ["media", "medio", "medium", "intermediate", "normal", "moyenne", "intermédiaire"],
     "baja": ["baja", "bajo", "low", "easy", "simple", "facil", "fácil", "basse", "facile"]
+}
+
+DOMAIN_TRANSLATIONS = {
+    "en": {
+        "Acústico": "Acoustic",
+        "Requiere Afinación": "Requires tuning",
+        "Polifónica": "Polyphonic",
+        "Compositor": "Composer",
+        "Obra": "Work",
+        "Instrumento": "Instrument",
+        "Capacidad": "Capability",
+        "Thing": "Thing",
+        "Instrumento_Cuerda": "String instrument",
+        "Instrumento_Viento": "Wind instrument",
+        "Instrumento_Percusion": "Percussion instrument",
+        "Instrumento_Teclado": "Keyboard instrument",
+        "Sinfonia": "Symphony",
+        "Sinfonía": "Symphony",
+        "Concierto": "Concerto",
+        "Sonata": "Sonata",
+        "Fuga": "Fugue",
+        "Tocata": "Toccata",
+        "Primavera": "Spring",
+        "Lago de los Cisnes": "Swan Lake",
+        "Claro de Luna": "Moonlight",
+        "Cascanueces": "Nutcracker",
+        "Danza Hada": "Fairy Dance",
+        "Violin": "Violin",
+        "Violín": "Violin",
+        "Violin Solista": "Solo violin",
+        "Piano Cola": "Grand piano",
+        "Flauta": "Flute",
+        "Guitarra": "Guitar",
+        "Clarinete": "Clarinet",
+        "Trompeta": "Trumpet",
+        "Trombon": "Trombone",
+        "Trombón": "Trombone",
+        "Tuba": "Tuba",
+        "Fagot": "Bassoon",
+        "Corno Frances": "French horn",
+        "Arpa": "Harp",
+        "Contrabajo": "Double bass",
+        "Viola": "Viola",
+        "Violonchelo": "Cello",
+        "Timbal": "Timpani",
+        "Transposicion": "Transposition",
+        "Transposición": "Transposition",
+        "Organo": "Organ",
+        "Órgano": "Organ",
+        "Acordeon": "Accordion",
+        "Acordeón": "Accordion",
+        "Cuerda": "String",
+        "Cuerdas": "Strings",
+        "Viento": "Wind",
+        "Percusion": "Percussion",
+        "Percusión": "Percussion",
+        "Romantico": "Romantic",
+        "Romántico": "Romantic",
+        "Clasico": "Classical",
+        "Clásico": "Classical",
+        "Barroco": "Baroque",
+        "Alta": "High",
+        "Media": "Medium",
+        "Baja": "Low",
+    },
+    "fr": {
+        "Acústico": "Acoustique",
+        "Requiere Afinación": "Accord requis",
+        "Polifónica": "Polyphonique",
+        "Compositor": "Compositeur",
+        "Obra": "Oeuvre",
+        "Instrumento": "Instrument",
+        "Capacidad": "Capacité",
+        "Thing": "Entité",
+        "Instrumento_Cuerda": "Instrument à cordes",
+        "Instrumento_Viento": "Instrument à vent",
+        "Instrumento_Percusion": "Instrument de percussion",
+        "Instrumento_Teclado": "Instrument à clavier",
+        "Sinfonia": "Symphonie",
+        "Sinfonía": "Symphonie",
+        "Concierto": "Concerto",
+        "Sonata": "Sonate",
+        "Fuga": "Fugue",
+        "Tocata": "Toccata",
+        "Primavera": "Printemps",
+        "Lago de los Cisnes": "Lac des cygnes",
+        "Claro de Luna": "Clair de lune",
+        "Cascanueces": "Casse-noisette",
+        "Danza Hada": "Danse de la fee",
+        "Violin": "Violon",
+        "Violín": "Violon",
+        "Violin Solista": "Violon soliste",
+        "Piano Cola": "Piano à queue",
+        "Flauta": "Flûte",
+        "Guitarra": "Guitare",
+        "Clarinete": "Clarinette",
+        "Trompeta": "Trompette",
+        "Trombon": "Trombone",
+        "Trombón": "Trombone",
+        "Tuba": "Tuba",
+        "Fagot": "Basson",
+        "Corno Frances": "Cor",
+        "Arpa": "Harpe",
+        "Contrabajo": "Contrebasse",
+        "Viola": "Alto",
+        "Violonchelo": "Violoncelle",
+        "Timbal": "Timbales",
+        "Transposicion": "Transposition",
+        "Transposición": "Transposition",
+        "Organo": "Orgue",
+        "Órgano": "Orgue",
+        "Acordeon": "Accordeon",
+        "Acordeón": "Accordeon",
+        "Cuerda": "Corde",
+        "Cuerdas": "Cordes",
+        "Viento": "Vent",
+        "Percusion": "Percussion",
+        "Percusión": "Percussion",
+        "Romantico": "Romantique",
+        "Romántico": "Romantique",
+        "Clasico": "Classique",
+        "Clásico": "Classique",
+        "Barroco": "Baroque",
+        "Alta": "Haute",
+        "Media": "Moyenne",
+        "Baja": "Basse",
+    },
 }
 
 def guardar_ontologia():
@@ -143,6 +333,82 @@ def normalize_text(text):
     text = "".join(char for char in text if unicodedata.category(char) != "Mn")
     return " ".join(text.replace("_", " ").replace("-", " ").split())
 
+def normalize_lang(lang):
+    if not lang:
+        return "es"
+
+    lang = str(lang).lower()
+    return lang if lang in SUPPORTED_LANGS else "es"
+
+def detectar_idioma_busqueda(texto, fallback="es"):
+    fallback = normalize_lang(fallback)
+    texto_original = str(texto or "").lower().strip()
+    texto_normalizado = normalize_text(texto)
+
+    if not texto_normalizado:
+        return fallback
+
+    tokens = texto_normalizado.split()
+    raw_tokens = texto_original.replace("_", " ").replace("-", " ").split()
+    scores = {lang: 0 for lang in SUPPORTED_LANGS}
+
+    for token in tokens:
+        override_lang = LANGUAGE_EXACT_OVERRIDES.get(token)
+        if override_lang:
+            scores[override_lang] += 3
+
+    for lang, hints in LANGUAGE_RAW_HINTS.items():
+        for hint in hints:
+            if hint in texto_original:
+                scores[lang] += 4
+
+    for lang, stopwords in LANGUAGE_STOPWORDS.items():
+        for token in raw_tokens:
+            if token in stopwords:
+                scores[lang] += 1
+
+    for lang, hints in LANGUAGE_HINTS.items():
+        for token in tokens:
+            if token in hints:
+                scores[lang] += 2
+
+        for phrase in hints:
+            if " " in phrase and phrase in texto_normalizado:
+                scores[lang] += 3
+
+    winner, winner_score = max(scores.items(), key=lambda item: item[1])
+
+    if winner_score == 0:
+        return fallback
+
+    tied = [lang for lang, score in scores.items() if score == winner_score]
+
+    if "fr" in tied and any(char in texto_original for char in "àâçéèêëîïôûùüÿœ"):
+        return "fr"
+
+    if "es" in tied and any(char in texto_original for char in "áéíóúñü"):
+        return "es"
+
+    return fallback if fallback in tied else winner
+
+def translate_domain_text(value, lang="es"):
+    lang = normalize_lang(lang)
+
+    if value is None or lang == "es":
+        return value
+
+    text = str(value)
+    translations = DOMAIN_TRANSLATIONS.get(lang, {})
+
+    if text in translations:
+        return translations[text]
+
+    translated = text
+    for source, target in sorted(translations.items(), key=lambda item: len(item[0]), reverse=True):
+        translated = re.sub(re.escape(source), target, translated, flags=re.IGNORECASE)
+
+    return translated
+
 def clean_ontology_name(value):
     if value is None: return "-"
     text = value.name if hasattr(value, "name") else str(value)
@@ -176,12 +442,12 @@ def get_relation_values(individual, property_names):
 
     return values
 
-def unique_clean_names(values):
+def unique_clean_names(values, lang="es"):
     seen = set()
     cleaned = []
 
     for value in values:
-        name = clean_ontology_name(value)
+        name = translate_domain_text(clean_ontology_name(value), lang)
         key = normalize_text(name)
 
         if name and name != "-" and key not in seen:
@@ -208,10 +474,13 @@ def find_related_by_property(target, property_names):
 # ==========================================
 # SERIALIZADOR DE INDIVIDUOS PARA EL FRONTEND
 # ==========================================
-def serialize_element(ind):
+def serialize_element(ind, lang="es"):
     """Transforma un individuo complejo de Owlready2 en un diccionario plano con caché."""
-    if ind.name in _serialized_cache:
-        return dict(_serialized_cache[ind.name])
+    lang = normalize_lang(lang)
+    cache_key = f"{ind.name}:{lang}"
+
+    if cache_key in _serialized_cache:
+        return dict(_serialized_cache[cache_key])
 
     # Propiedades de datos teóricas e históricas
     nombre = get_first_value(ind, "nombre", ind.name)
@@ -221,20 +490,22 @@ def serialize_element(ind):
     anio = get_first_value(ind, "anioLanzamiento", "-")            # Año de composición o publicación
 
     # Relaciones entre objetos
-    creador = clean_ontology_name(get_first_value(ind, "creadoPor", None))          # Obras -> Autor
-    instrumento = clean_ontology_name(get_first_value(ind, "seTocaCon", None))      # Obras -> Instrumento
-    familia = clean_ontology_name(get_first_value(ind, "perteneceAFamilia", None))  # Instrumentos -> Familia técnica
+    creador = translate_domain_text(clean_ontology_name(get_first_value(ind, "creadoPor", None)), lang)          # Obras -> Autor
+    instrumento = translate_domain_text(clean_ontology_name(get_first_value(ind, "seTocaCon", None)), lang)      # Obras -> Instrumento
+    familia = translate_domain_text(clean_ontology_name(get_first_value(ind, "perteneceAFamilia", None)), lang)  # Instrumentos -> Familia técnica
 
     # Obras compuestas por este individuo. Usa la inversa inferida y un
     # respaldo directo sobre las obras que apuntan al compositor.
     obras_compuestas = unique_clean_names(
         get_relation_values(ind, ["compuso"]) +
-        find_related_by_property(ind, ["compuestaPor"])
+        find_related_by_property(ind, ["compuestaPor"]),
+        lang
     )
 
     # Instrumentos que interpretan o requiere esta obra.
     instrumentos_obra = unique_clean_names(
-        get_relation_values(ind, ["interpretadaPor", "seTocaCon"])
+        get_relation_values(ind, ["interpretadaPor", "seTocaCon"]),
+        lang
     )
 
     # Compositor desde data property (para Obras que tienen 'compositor' como string)
@@ -242,12 +513,13 @@ def serialize_element(ind):
     try:
         vals = list(getattr(ind, "compositor", []))
         if vals:
-            compositor_dp = str(vals[0])
+            compositor_dp = translate_domain_text(str(vals[0]), lang)
     except:
         pass
 
     compositores_relacionados = unique_clean_names(
-        get_relation_values(ind, ["compuestaPor", "creadoPor"])
+        get_relation_values(ind, ["compuestaPor", "creadoPor"]),
+        lang
     )
 
     if compositor_dp == "-" and compositores_relacionados:
@@ -261,20 +533,24 @@ def serialize_element(ind):
 
     # Mapeo de Tags dinámicos según propiedades booleanas de la ontología
     tags = []
-    if to_bool(get_first_value(ind, "esAcustico", False)): tags.append("Acústico")
-    if to_bool(get_first_value(ind, "requiereAfinacion", False)): tags.append("Requiere Afinación")
-    if to_bool(get_first_value(ind, "esPolifonica", False)): tags.append("Polifónica")
+    if to_bool(get_first_value(ind, "esAcustico", False)): tags.append(translate_domain_text("Acústico", lang))
+    if to_bool(get_first_value(ind, "requiereAfinacion", False)): tags.append(translate_domain_text("Requiere Afinación", lang))
+    if to_bool(get_first_value(ind, "esPolifonica", False)): tags.append(translate_domain_text("Polifónica", lang))
 
-    clases = [clase.name for clase in ind.is_a if hasattr(clase, 'name')]
+    clases = [
+        translate_domain_text(clase.name, lang)
+        for clase in ind.is_a
+        if hasattr(clase, 'name')
+    ]
     for c in clases: 
         if c != "NamedIndividual": tags.append(c)
 
     data = {
         "id": ind.name,
-        "nombre": clean_ontology_name(nombre),
-        "descripcion": str(descripcion),
-        "periodoHistorico": str(periodo),
-        "complejidadTecnica": str(dificultad),
+        "nombre": translate_domain_text(clean_ontology_name(nombre), lang),
+        "descripcion": translate_domain_text(str(descripcion), lang),
+        "periodoHistorico": translate_domain_text(str(periodo), lang),
+        "complejidadTecnica": translate_domain_text(str(dificultad), lang),
         "anioLanzamiento": str(anio),
         "autor": creador,
         "instrumentoRequerido": instrumento,
@@ -286,7 +562,7 @@ def serialize_element(ind):
         "compositorTexto": compositor_dp,
     }
     
-    _serialized_cache[ind.name] = data
+    _serialized_cache[cache_key] = data
     return dict(data)
 
 # ==========================================
@@ -297,13 +573,13 @@ def obtener_clases():
     if not onto: return []
     return [{"nombre": clase.name} for clase in onto.classes()]
 
-def buscar_individuos_por_clase(nombre_clase):
+def buscar_individuos_por_clase(nombre_clase, lang="es"):
     onto = cargar_y_razonar()
     clase_objeto = onto.search_one(iri=f"*{nombre_clase}") if onto else None
     if not clase_objeto: return []
-    return [serialize_element(ind) for ind in clase_objeto.instances()]
+    return [serialize_element(ind, lang) for ind in clase_objeto.instances()]
 
-def buscar_por_texto(palabra_clave):
+def buscar_por_texto(palabra_clave, lang="es"):
 
     onto = cargar_y_razonar()
 
@@ -322,7 +598,7 @@ def buscar_por_texto(palabra_clave):
 
     for ind in onto.individuals():
 
-        data = serialize_element(ind)
+        data = serialize_element(ind, lang)
 
         score = 0
 
@@ -378,89 +654,89 @@ def buscar_por_texto(palabra_clave):
 
     return resultados
 
-def obtener_detalle_individuo(nombre_individuo):
+def obtener_detalle_individuo(nombre_individuo, lang="es"):
     onto = cargar_y_razonar()
     individuo = onto.search_one(iri=f"*{nombre_individuo}") if onto else None
     if not individuo: return None
-    return serialize_element(individuo)
+    return serialize_element(individuo, lang)
 
 # ==========================================
 # ENRUTADOR DE CONSULTAS SEMÁNTICAS HÍBRIDAS
 # ==========================================
-def q_obras_complejas_piano():
-    return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
-            if normalize_text(serialize_element(ind)["complejidadTecnica"]) == "alta" 
-            and "piano" in normalize_text(serialize_element(ind)["instrumentoRequerido"])]
+def q_obras_complejas_piano(lang="es"):
+    return [serialize_element(ind, lang) for ind in cargar_y_razonar().individuals() 
+            if normalize_text(serialize_element(ind, "es")["complejidadTecnica"]) == "alta" 
+            and "piano" in normalize_text(serialize_element(ind, "es")["instrumentoRequerido"])]
 
-def q_autores_periodo_romantico():
-    return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
-            if "romantico" in normalize_text(serialize_element(ind)["periodoHistorico"])]
+def q_autores_periodo_romantico(lang="es"):
+    return [serialize_element(ind, lang) for ind in cargar_y_razonar().individuals() 
+            if "romantico" in normalize_text(serialize_element(ind, "es")["periodoHistorico"])]
 
-def q_instrumentos_viento_madera():
-    return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
-            if "viento madera" in normalize_text(serialize_element(ind)["familiaInstrumento"])]
+def q_instrumentos_viento_madera(lang="es"):
+    return [serialize_element(ind, lang) for ind in cargar_y_razonar().individuals() 
+            if "viento madera" in normalize_text(serialize_element(ind, "es")["familiaInstrumento"])]
 
-def q_instrumentos_cuerda():
+def q_instrumentos_cuerda(lang="es"):
 
     return [
 
-        serialize_element(ind)
+        serialize_element(ind, lang)
 
         for ind in cargar_y_razonar().individuals()
 
         if "cuerda"
         in normalize_text(
-            serialize_element(ind)["familiaInstrumento"]
+            serialize_element(ind, "es")["familiaInstrumento"]
         )
     ]
-def q_instrumentos_viento():
+def q_instrumentos_viento(lang="es"):
 
     return [
 
-        serialize_element(ind)
+        serialize_element(ind, lang)
 
         for ind in cargar_y_razonar().individuals()
 
         if "viento"
         in normalize_text(
-            serialize_element(ind)["familiaInstrumento"]
+            serialize_element(ind, "es")["familiaInstrumento"]
         )
     ]
 
-def q_instrumentos_percusion():
+def q_instrumentos_percusion(lang="es"):
 
     return [
 
-        serialize_element(ind)
+        serialize_element(ind, lang)
 
         for ind in cargar_y_razonar().individuals()
 
         if "percusion"
         in normalize_text(
-            serialize_element(ind)["familiaInstrumento"]
+            serialize_element(ind, "es")["familiaInstrumento"]
         )
     ]
 
-def q_obras_romanticas():
+def q_obras_romanticas(lang="es"):
 
     return [
 
-        serialize_element(ind)
+        serialize_element(ind, lang)
 
         for ind in cargar_y_razonar().individuals()
 
         if "romantico"
         in normalize_text(
-            serialize_element(ind)["periodoHistorico"]
+            serialize_element(ind, "es")["periodoHistorico"]
         )
     ]
 
-def q_obras_por_autor(param):
+def q_obras_por_autor(param, lang="es"):
     if not param: return []
     p = normalize_text(param)
-    return [serialize_element(ind) for ind in cargar_y_razonar().individuals() 
-            if p in normalize_text(serialize_element(ind)["autor"])
-            or p in normalize_text(serialize_element(ind)["compositorTexto"])]
+    return [serialize_element(ind, lang) for ind in cargar_y_razonar().individuals() 
+            if p in normalize_text(serialize_element(ind, "es")["autor"])
+            or p in normalize_text(serialize_element(ind, "es")["compositorTexto"])]
 
 SEMANTIC_QUERY_MAP = {
     # --- FILTROS POR FAMILIAS DE INSTRUMENTOS (ES / EN / FR) ---
@@ -632,7 +908,7 @@ def detectar_consulta_semantica(texto):
 
     return None, None
 
-def ejecutar_consulta_semantica_musical(query_name, param=None):
+def ejecutar_consulta_semantica_musical(query_name, param=None, lang="es"):
     """Router central dinámico para invocar las consultas de lógica técnica."""
     queries = {
         "obras_complejas_piano": q_obras_complejas_piano,
@@ -647,8 +923,8 @@ def ejecutar_consulta_semantica_musical(query_name, param=None):
         "obras_por_autor": q_obras_por_autor,
     }
 
-    if query_name in queries: return queries[query_name]()
-    if query_name in queries_with_param: return queries_with_param[query_name](param)
+    if query_name in queries: return queries[query_name](lang)
+    if query_name in queries_with_param: return queries_with_param[query_name](param, lang)
     return []
 
 # ==========================================
