@@ -64,13 +64,13 @@ function interpolate(
 }
 
 // Lee el locale guardado solo en el cliente; en SSR devuelve 'es'.
-function getInitialLocale(): Locale {
-  if (typeof window === 'undefined') return 'es';
+function getStoredLocale(): Locale | null {
+  if (typeof window === 'undefined') return null;
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (stored && LOCALES.includes(stored as Locale)) {
     return stored as Locale;
   }
-  return 'es';
+  return null;
 }
 
 export default function LanguageProvider({
@@ -80,7 +80,7 @@ export default function LanguageProvider({
 }) {
   // useState con función de inicialización: se ejecuta solo en el cliente,
   // así el estado arranca con el valor correcto sin necesitar un efecto.
-  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
+  const [locale, setLocaleState] = useState<Locale>('es');
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale);
@@ -92,6 +92,17 @@ export default function LanguageProvider({
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    const storedLocale = getStoredLocale();
+
+    if (storedLocale) {
+      window.requestAnimationFrame(() => {
+        setLocaleState(storedLocale);
+        document.documentElement.lang = storedLocale;
+      });
+    }
+  }, []);
 
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>) => {

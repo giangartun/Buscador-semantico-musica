@@ -1,6 +1,6 @@
 import json
 import re
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 from urllib.request import Request, urlopen
 from owlready2 import default_world, Thing
 import types
@@ -277,6 +277,142 @@ PHRASE_RESOURCE_MAP = {
     "escala": ["Scale_(music)"], "escalas": ["Scale_(music)"], 
     "scale": ["Scale_(music)"], "scales": ["Scale_(music)"], 
     "gamme": ["Scale_(music)"], "gammes": ["Scale_(music)"],
+
+    # ==========================================
+    # VARIACIONES DE AUTORES CLAVE (ES / EN / FR)
+    # ==========================================
+    # Wolfgang Amadeus Mozart
+    "wolfgang": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+    "amadeus": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+    "wolfgang amadeus": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+    "amadeus mozart": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+    "wolfgang amadeus mozart": ["Wolfgang_Amadeus_Mozart", "List_of_compositions_by_Wolfgang_Amadeus_Mozart"],
+
+    # Ludwig van Beethoven
+    "ludwig": ["Ludwig_van_Beethoven", "List_of_compositions_by_Ludwig_van_Beethoven"],
+    "ludwig van": ["Ludwig_van_Beethoven", "List_of_compositions_by_Ludwig_van_Beethoven"],
+    "ludwig van beethoven": ["Ludwig_van_Beethoven", "List_of_compositions_by_Ludwig_van_Beethoven"],
+
+    # Johann Sebastian Bach
+    "johann": ["Johann_Sebastian_Bach", "List_of_compositions_by_Johann_Sebastian_Bach"],
+    "sebastian": ["Johann_Sebastian_Bach", "List_of_compositions_by_Johann_Sebastian_Bach"],
+    "johann sebastian": ["Johann_Sebastian_Bach", "List_of_compositions_by_Johann_Sebastian_Bach"],
+    "johann sebastian bach": ["Johann_Sebastian_Bach", "List_of_compositions_by_Johann_Sebastian_Bach"],
+
+    # Frédéric Chopin
+    "frederic": ["Frédéric_Chopin", "List_of_compositions_by_Frédéric_Chopin_by_genre"],
+    "frédéric": ["Frédéric_Chopin", "List_of_compositions_by_Frédéric_Chopin_by_genre"],
+    "frederic chopin": ["Frédéric_Chopin", "List_of_compositions_by_Frédéric_Chopin_by_genre"],
+    "frédéric chopin": ["Frédéric_Chopin", "List_of_compositions_by_Frédéric_Chopin_by_genre"],
+
+    # Franz Schubert
+    "franz": ["Franz_Schubert", "List_of_compositions_by_Franz_Schubert"],
+    "franz schubert": ["Franz_Schubert", "List_of_compositions_by_Franz_Schubert"],
+
+    # Franz Liszt
+    "franz liszt": ["Franz_Liszt", "List_of_compositions_by_Franz_Liszt"],
+
+    # Antonio Vivaldi
+    "antonio": ["Antonio_Vivaldi", "List_of_compositions_by_Antonio_Vivaldi"],
+    "antonio vivaldi": ["Antonio_Vivaldi", "List_of_compositions_by_Antonio_Vivaldi"],
+
+    # Sergei Rachmaninoff
+    "sergei": ["Sergei_Rachmaninoff", "List_of_compositions_by_Sergei_Rachmaninoff"],
+    "sergei rachmaninoff": ["Sergei_Rachmaninoff", "List_of_compositions_by_Sergei_Rachmaninoff"],
+
+    # Pyotr Ilyich Tchaikovsky
+    "pyotr": ["Pyotr_Ilyich_Tchaikovsky", "List_of_compositions_by_Pyotr_Ilyich_Tchaikovsky"],
+    "ilyich": ["Pyotr_Ilyich_Tchaikovsky", "List_of_compositions_by_Pyotr_Ilyich_Tchaikovsky"],
+    "pyotr ilyich": ["Pyotr_Ilyich_Tchaikovsky", "List_of_compositions_by_Pyotr_Ilyich_Tchaikovsky"],
+    "pyotr ilyich tchaikovsky": ["Pyotr_Ilyich_Tchaikovsky", "List_of_compositions_by_Pyotr_Ilyich_Tchaikovsky"],
+
+    # Niccolò Paganini
+    "niccolo": ["Niccolò_Paganini", "List_of_compositions_by_Niccolò_Paganini"],
+    "niccolò": ["Niccolò_Paganini", "List_of_compositions_by_Niccolò_Paganini"],
+    "niccolo paganini": ["Niccolò_Paganini", "List_of_compositions_by_Niccolò_Paganini"],
+    "niccolò paganini": ["Niccolò_Paganini", "List_of_compositions_by_Niccolò_Paganini"],
+
+    # Johann Strauss II
+    "johann strauss": ["Johann_Strauss_II", "List_of_compositions_by_Johann_Strauss_II"],
+    "johann strauss ii": ["Johann_Strauss_II", "List_of_compositions_by_Johann_Strauss_II"],
+
+    # George Frideric Handel
+    "george": ["George_Frideric_Handel", "List_of_compositions_by_George_Frideric_Handel"],
+    "frideric": ["George_Frideric_Handel", "List_of_compositions_by_George_Frideric_Handel"],
+    "george frideric": ["George_Frideric_Handel", "List_of_compositions_by_George_Frideric_Handel"],
+    "george frideric handel": ["George_Frideric_Handel", "List_of_compositions_by_George_Frideric_Handel"],
+
+    # Astor Piazzolla
+    "astor": ["Astor_Piazzolla"],
+    "astor piazzolla": ["Astor_Piazzolla"],
+
+    # Jean Michel Jarre
+    "jean": ["Jean_Michel_Jarre"],
+    "michel": ["Jean_Michel_Jarre"],
+    "jean michel": ["Jean_Michel_Jarre"],
+    "jean michel jarre": ["Jean_Michel_Jarre"],
+
+    # Claude Debussy
+    "claude": ["Claude_Debussy"],
+    "claude debussy": ["Claude_Debussy"],
+
+    # =========================================================================
+    # NUEVOS INSTRUMENTOS DE LA DBPEDIA NO INCLUIDOS (ES / EN / FR)
+    # =========================================================================
+    # Órgano / Pipe Organ
+    "organo": ["Pipe_organ"], "órgano": ["Pipe_organ"], "organos": ["Pipe_organ"], "órganos": ["Pipe_organ"],
+    "organ": ["Pipe_organ"], "organs": ["Pipe_organ"], "pipe organ": ["Pipe_organ"], 
+    "orgue": ["Pipe_organ"], "orgues": ["Pipe_organ"],
+
+    # Viola
+    "viola": ["Viola"], "violas": ["Viola"], "alto": ["Viola"], "altos": ["Viola"], 
+
+    # Fagot / Bassoon
+    "fagot": ["Bassoon"], "fagotes": ["Bassoon"], "bassoon": ["Bassoon"], 
+    "bassoons": ["Bassoon"], "basson": ["Bassoon"], "bassons": ["Bassoon"],
+
+    # Timbales / Timpani
+    "timbal": ["Timpani"], "timbales": ["Timpani"], "timpani": ["Timpani"], 
+    "kettledrum": ["Timpani"], "kettledrums": ["Timpani"], "timbale": ["Timpani"],
+
+    # Contrafagot / Contrabassoon
+    "contrafagot": ["Contrabassoon"], "contrabassoon": ["Contrabassoon"], "contre-basson": ["Contrabassoon"],
+
+    # Corno Inglés / English Horn
+    "corno ingles": ["English_horn"], "corno inglés": ["English_horn"], 
+    "english horn": ["English_horn"], "cor anglais": ["English_horn"],
+
+    # Piccolo / Flautín
+    "flautin": ["Piccolo"], "flautín": ["Piccolo"], "piccolo": ["Piccolo"], "petite flûte": ["Piccolo"],
+
+    # Carillón / Glockenspiel
+    "glockenspiel": ["Glockenspiel"], "carillon": ["Carillon"], "carillón": ["Carillon"],
+
+    # Gong / Tam-tam
+    "gong": ["Gong"], "gongs": ["Gong"], "tam-tam": ["Gong"],
+
+    # Platillos / Cymbals
+    "platillo": ["Cymbal"], "platillos": ["Cymbal"], "cymbal": ["Cymbal"], "cymbals": ["Cymbal"], "cymbales": ["Cymbal"],
+
+    # Xilófono / Xylophone
+    "xilofono": ["Xylophone"], "xilófono": ["Xylophone"], "xylophone": ["Xylophone"], "xylophones": ["Xylophone"],
+
+    # Marimba
+    "marimba": ["Marimba"], "marimbas": ["Marimba"],
+
+    # Celesta
+    "celesta": ["Celesta"],
+
+    # Laúd / Lute
+    "laud": ["Lute"], "laúd": ["Lute"], "lute": ["Lute"], "luth": ["Lute"],
+
+    # Viola da Gamba
+    "viola da gamba": ["Viola_da_gamba"], "viol de gambe": ["Viola_da_gamba"], "bass viol": ["Viola_da_gamba"],
+
+    # Sintetizador / Synthesizer (Muy relevante para Jean Michel Jarre)
+    "sintetizador": ["Synthesizer"], "sintetizadores": ["Synthesizer"], 
+    "synthesizer": ["Synthesizer"], "synthesizers": ["Synthesizer"], 
+    "synthétiseur": ["Synthesizer"], "synthétiseurs": ["Synthesizer"],
 }
 
 STOPWORDS = {"de", "del", "la", "el", "los", "las", "en", "con", "y", "por", "para", "un", "una", "al", "a"}
@@ -303,6 +439,19 @@ RESOURCE_DESCRIPTIONS = {
     "fr": "Ressource musicale historique très pertinente de DBpedia.",
 }
 
+INSTRUMENT_RESOURCES = {
+    "Accordion", "Aerophone", "Clarinet", "Cimbalom", "Clavichord",
+    "Double_bass", "Flute", "French_horn", "Guitar", "Harp", "Keyboard",
+    "Mandolin", "Oboe", "Piano", "Saxophone", "Trombone", "Trumpet",
+    "Tuba", "Violin",
+}
+
+WORK_RESOURCES = {
+    "Catalogues_of_classical_compositions", "Compositions", "Concerto",
+    "Fantaisie", "Fugue", "Musical_composition", "Nocturne", "Opera",
+    "Prelude", "Sheet_music", "Sonata", "Song", "Symphony",
+}
+
 def _normalize_lang(lang):
     if not lang:
         return "es"
@@ -318,6 +467,30 @@ def _resource_label(resource_name, lang):
 
 def _resource_description(lang):
     return RESOURCE_DESCRIPTIONS[_normalize_lang(lang)]
+
+def _resource_name_from_uri(uri):
+    return unquote(str(uri).rstrip("/").split("/")[-1])
+
+def _stable_local_id(item):
+    resource_name = _resource_name_from_uri(item.get("uri_dbpedia", ""))
+    if resource_name:
+        return resource_name.replace(".", "").strip()
+    return item["nombre"].replace(" ", "_").replace(".", "").strip()
+
+def _infer_local_class(item, default_class="Compositor"):
+    resource_name = _resource_name_from_uri(item.get("uri_dbpedia", ""))
+
+    if resource_name in INSTRUMENT_RESOURCES:
+        return "Instrumento"
+
+    if resource_name in WORK_RESOURCES or resource_name.startswith("List_of_compositions"):
+        return "Obra"
+
+    return default_class
+
+def _append_unique(values, value):
+    if value and value not in values:
+        values.append(value)
 
 def _safe_first(values, default=None):
     if not values:
@@ -542,8 +715,7 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
                 **detalles,
             })
 
-        if motor_semantico._onto_instancia is not None:
-            poblar_ontologia_con_dbpedia(resultados, "Compositor")
+        poblar_ontologia_con_dbpedia(resultados, "Compositor")
 
         return resultados
 
@@ -591,9 +763,7 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
                 })
 
         if resultados_limpios:
-            # Poblamos sobre nuestra ontologia activa si ya esta en memoria
-            if motor_semantico._onto_instancia is not None:
-                poblar_ontologia_con_dbpedia(resultados_limpios, "Compositor")
+            poblar_ontologia_con_dbpedia(resultados_limpios, "Compositor")
             return resultados_limpios
 
         return []
@@ -604,45 +774,56 @@ def consultar_dbpedia_artistas(nombre_artista, lang="es"):
 
 def poblar_ontologia_con_dbpedia(datos_remotos, nombre_clase_local="Compositor"):
     """
-    Inserta los datos recuperados de DBpedia directo en la memoria RAM 
-    de la ontología actual, manteniendo el backend compacto y veloz.
+    Inserta datos recuperados de DBpedia en la ontologia activa y los guarda
+    en musica.owl para poder reutilizarlos sin conexion en futuras ejecuciones.
     """
     if not datos_remotos:
         return False
-        
+
     onto = motor_semantico.cargar_y_razonar()
     if not onto:
         return False
-    
-    print(f"[Poblado] Inyectando datos en la sesión activa bajo la clase '{nombre_clase_local}'...")
-    ClaseLocal = getattr(onto, nombre_clase_local, None)
-    
-    if ClaseLocal is None:
-        with onto:
-            ClaseLocal = types.new_class(nombre_clase_local, (Thing,))
-        
+
+    print("[Poblado] Inyectando datos en la sesion activa con clase inferida desde DBpedia...")
+    changed = False
+
     for item in datos_remotos:
-        id_individuo = item["nombre"].replace(" ", "_").replace(".", "").strip()
+        clase_item = _infer_local_class(item, nombre_clase_local)
+        ClaseLocal = getattr(onto, clase_item, None)
+
+        if ClaseLocal is None:
+            with onto:
+                ClaseLocal = types.new_class(clase_item, (Thing,))
+
+        id_individuo = _stable_local_id(item)
+
         try:
             with onto:
                 nuevo_individuo = ClaseLocal(id_individuo)
-                if hasattr(onto, "nombre"):
-                    nuevo_individuo.nombre.append(item["nombre"])
-                if hasattr(onto, "descripcion"):
-                    nuevo_individuo.descripcion.append(item["descripcion"])
-                if hasattr(onto, "sameAs"):
-                    nuevo_individuo.sameAs.append(item["uri_dbpedia"])
-                
-            print(f"[Poblado] ¡Éxito! Individuo '{id_individuo}' guardado en memoria RAM.")
-            
-            # Eliminamos de la caché para forzar al motor a refrescar la lista
-            if id_individuo in motor_semantico._serialized_cache:
-                del motor_semantico._serialized_cache[id_individuo]
-        except Exception as e:
-            pass # El individuo ya existía o está duplicado, se maneja de forma segura
-            
-    return True
+                for property_name, value in [
+                    ("nombre", item.get("nombre")),
+                    ("descripcion", item.get("descripcion")),
+                    ("sameAs", item.get("uri_dbpedia")),
+                ]:
+                    try:
+                        if hasattr(onto, property_name) and hasattr(nuevo_individuo, property_name):
+                            _append_unique(getattr(nuevo_individuo, property_name), value)
+                    except Exception as property_error:
+                        print(f"[Poblado] Propiedad opcional '{property_name}' omitida para '{id_individuo}': {property_error}")
 
+            changed = True
+            print(f"[Poblado] Exito: individuo '{id_individuo}' guardado como '{clase_item}'.")
+
+            for cache_key in list(motor_semantico._serialized_cache):
+                if cache_key == id_individuo or cache_key.startswith(f"{id_individuo}:"):
+                    del motor_semantico._serialized_cache[cache_key]
+        except Exception as e:
+            print(f"[Poblado] No se pudo insertar '{id_individuo}': {e}")
+
+    if changed:
+        motor_semantico.guardar_ontologia()
+
+    return changed
 # ==========================================
 # PRUEBA LOCAL EN CONSOLA
 # ==========================================
@@ -650,3 +831,4 @@ if __name__ == "__main__":
     # Probamos directo a Mozart
     res = consultar_dbpedia_artistas("Mozart")
     print(f"\nResultados de la prueba técnica: {json.dumps(res, indent=2, ensure_ascii=False)}")
+

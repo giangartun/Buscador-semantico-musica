@@ -62,6 +62,7 @@ def api_dbpedia():
 
     return jsonify({
         "total": len(resultados),
+        "idioma": idioma_resultado,
         "resultados": resultados
     })
 
@@ -78,6 +79,7 @@ def api_sparql():
 
     return jsonify({
         "total": len(resultados),
+        "idioma": idioma_resultado,
         "resultados": resultados
     })
 

@@ -13,6 +13,87 @@ import {
 } from './services/apiService';
 
 const LOCALES = ['es', 'en', 'fr'] as const;
+type Locale = (typeof LOCALES)[number];
+
+const LANGUAGE_HINTS: Record<Locale, Set<string>> = {
+  es: new Set([
+    'acordeon', 'aerofono', 'arpa', 'autor', 'barroco', 'cancion',
+    'clasico', 'clarinete', 'composicion', 'composiciones', 'compositor',
+    'concierto', 'cuerda', 'cuerdas', 'flauta', 'guitarra', 'instrumento',
+    'instrumentos', 'obra', 'obras', 'percusion', 'romantico', 'sinfonia',
+    'trombon', 'trompeta', 'viento',
+  ]),
+  en: new Set([
+    'author', 'baroque', 'clarinet', 'classical', 'composition',
+    'compositions', 'composer', 'concerto', 'flute', 'guitar', 'instrument',
+    'instruments', 'music', 'piece', 'pieces', 'percussion', 'romantic',
+    'string', 'strings', 'symphony', 'trombone', 'trumpet', 'violin', 'wind',
+    'work', 'works',
+  ]),
+  fr: new Set([
+    'auteur', 'baroque', 'chanson', 'clarinette', 'classique',
+    'compositeur', 'composition', 'compositions', 'concerto', 'corde',
+    'cordes', 'flute', 'guitare', 'instrument', 'instruments', 'morceau',
+    'morceaux', 'oeuvre', 'oeuvres', 'percussion', 'romantique',
+    'symphonie', 'trombone', 'trompette', 'vent', 'violon',
+  ]),
+};
+
+const EXACT_LANGUAGE: Record<string, Locale> = {
+  flute: 'en',
+  guitar: 'en',
+  violin: 'en',
+  flûte: 'fr',
+  guitare: 'fr',
+  violon: 'fr',
+  guitarra: 'es',
+  flauta: 'es',
+  'violín': 'es',
+};
+
+function normalizeSearchText(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[_-]/g, ' ')
+    .trim();
+}
+
+function detectarIdiomaBusqueda(value: string, fallback: Locale): Locale {
+  const raw = value.toLowerCase().trim();
+  const normalized = normalizeSearchText(value);
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const scores: Record<Locale, number> = { es: 0, en: 0, fr: 0 };
+
+  for (const token of raw.split(/\s+/).filter(Boolean)) {
+    const exact = EXACT_LANGUAGE[token];
+    if (exact) scores[exact] += 4;
+  }
+
+  for (const token of tokens) {
+    const exact = EXACT_LANGUAGE[token];
+    if (exact) scores[exact] += 3;
+
+    for (const code of LOCALES) {
+      if (LANGUAGE_HINTS[code].has(token)) {
+        scores[code] += 2;
+      }
+    }
+  }
+
+  if (/[àâçéèêëîïôûùüÿœ]/.test(raw)) scores.fr += 4;
+  if (/[áéíóúñü]/.test(raw)) scores.es += 4;
+
+  const winner = LOCALES.reduce((best, code) =>
+    scores[code] > scores[best] ? code : best
+  );
+
+  if (scores[winner] === 0) return fallback;
+
+  const tied = LOCALES.filter((code) => scores[code] === scores[winner]);
+  return tied.includes(fallback) ? fallback : winner;
+}
 
 export default function HomePage() {
   const { locale, setLocale, t } = useI18n();
@@ -87,6 +168,11 @@ export default function HomePage() {
         return;
       }
 
+      const idiomaBusqueda = detectarIdiomaBusqueda(termino, locale);
+      if (idiomaBusqueda !== locale) {
+        setLocale(idiomaBusqueda);
+      }
+
       abortControllerRef.current?.abort();
 
       const controller = new AbortController();
@@ -108,7 +194,7 @@ export default function HomePage() {
               aplicarRespuesta(respuestaParcial);
             }
           },
-          locale
+          idiomaBusqueda
         );
 
         if (!controller.signal.aborted) {
@@ -127,7 +213,7 @@ export default function HomePage() {
         }
       }
     },
-    [aplicarRespuesta, locale, nombreModo, t]
+    [aplicarRespuesta, locale, nombreModo, setLocale, t]
   );
 
   const handleSearch = useCallback(
