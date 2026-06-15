@@ -532,6 +532,7 @@
   <rdf:type rdf:resource="#Compositor"/>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compositor y violinista italiano del período Barroco, figura clave en el desarrollo del concierto solista. Su dominio de la composición para cuerdas quedó inmortalizado en su famosa serie de conciertos "Las cuatro estaciones".</descripcion>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ressource musicale historique très pertinente de DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Arpa_Concierto">
@@ -586,6 +587,7 @@
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compositor austriaco del período Clásico y niño prodigio inigualable. Su prolífica obra abarca todos los géneros posibles de su época con una perfección formal, elegancia y brillantez melódica que siguen siendo la base del repertorio académico.</descripcion>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wolfgang Amadeus Mozart (27 January 1756 – 5 December 1791), baptised as Johannes Chrysostomus</descripcion>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ressource musicale historique très pertinente de DBpedia.</descripcion>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Corno_Frances">
@@ -2236,11 +2238,14 @@
 <owl:NamedIndividual rdf:about="#Flute">
   <rdf:type rdf:resource="#Instrumento"/>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Highly relevant historical music resource from DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ressource musicale historique très pertinente de DBpedia.</descripcion>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#List_of_compositions_by_Antonio_Vivaldi">
   <rdf:type rdf:resource="#Obra"/>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ressource musicale historique très pertinente de DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Goethe_University_Frankfurt">
@@ -2255,6 +2260,63 @@
 
 <owl:NamedIndividual rdf:about="#List_of_compositions_by_Wolfgang_Amadeus_Mozart">
   <rdf:type rdf:resource="#Obra"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ressource musicale historique très pertinente de DBpedia.</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#String_instrument">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Highly relevant historical music resource from DBpedia.</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Eudicots">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The eudicots, Eudicotidae or eudicotyledons are a clade of flowering plants that had been called tricolpates or non-magnoliid dicots by previous authors. The botanical terms were introduced in 1991 by...</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Spinal_cord_injury">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A spinal cord injury (SCI) is damage to the spinal cord that causes temporary or permanent changes</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Spinal_cord">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The spinal cord is a long, thin, tubular structure made up of nervous tissue, which extends from</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#California">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">. state and the third-largest by area. The state capital is Sacramento. The Greater Los Angeles Area and</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Los_Angeles">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Los Angeles ( (); Spanish: Los Ángeles; Spanish for "The Angels"), officially the City of Los</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Spain">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Spain (Spanish: España [esˈpaɲa] ()), officially the Kingdom of Spain (Spanish: Reino de España</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Swan_Lake">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Swan Lake (Russian: Лебеди́ное о́зеро, romanized: Lebedínoye ózero), Op. 20, is a ballet composed</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Swan_Lake_(disambiguation)">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personaje o elemento del catálogo de música clásica.</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Swan_Lake_Park">
+  <rdf:type rdf:resource="#Compositor"/>
+  <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Swan Lake Park is located on East Main Street, East Patchogue, in the township of Brookhaven</descripcion>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Oboe">
+  <rdf:type rdf:resource="#Instrumento"/>
   <descripcion rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recurso histórico musical de alta relevancia en DBpedia.</descripcion>
 </owl:NamedIndividual>
 
